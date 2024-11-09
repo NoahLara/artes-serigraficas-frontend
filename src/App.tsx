@@ -1,5 +1,4 @@
 import '@mantine/core/styles.css';
-
 import { MantineProvider } from '@mantine/core';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { MainLayout } from './modules/layouts/main-layout';
@@ -8,7 +7,7 @@ import { EmployeesPage } from './modules/employees/employees.page';
 
 export default function App() {
   return (
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="dark">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout />}>
