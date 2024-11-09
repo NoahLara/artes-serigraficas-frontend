@@ -5,5 +5,4 @@ export const OrdersContainer = styled.div`
 `;
 
 export const OrdersTitle = styled.h2`
-  color: #444;
 `;

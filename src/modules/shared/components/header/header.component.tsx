@@ -5,8 +5,8 @@ import { Darkmode } from "../darkmode/darkmode.component";
 export const Header: React.FC = () => {
   return (
     <S.HeaderContainer>
-      <Darkmode />
       <S.HeaderTitle>Artes Serigraficas</S.HeaderTitle>
+      <Darkmode />
     </S.HeaderContainer>
   );
 };
