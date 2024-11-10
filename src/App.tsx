@@ -8,7 +8,7 @@ import { EmployeesPage } from './modules/employees/employees.page';
 export default function App() {
   return (
     <MantineProvider defaultColorScheme="dark">
-      <BrowserRouter>
+      <BrowserRouter basename="/artes-serigraficas-frontend">
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route path="orders" element={<OrdersPage />} />
