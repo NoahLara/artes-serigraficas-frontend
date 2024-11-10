@@ -1,9 +1,10 @@
 import styled from "styled-components";
+import { Link } from 'react-router-dom';
 
 export const SidebarContainer = styled.aside`
   width: 200px;
-  background-color: #f5f5f5;
   padding: 20px;
+  border-right: 1px solid #ececec;
 `;
 
 export const SidebarTitle = styled.h3`
@@ -14,12 +15,9 @@ export const SidebarTitle = styled.h3`
 export const NavList = styled.ul`
   list-style: none;
   padding: 0;
-  border:2px solid purple;
 `;
 
-export const NavItem = styled.li`
-  margin: 10px 0;
-  border:2px solid grey;
-  display: flex;
-  flex-flow: column;
+export const LinkItem = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;
