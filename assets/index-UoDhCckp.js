@@ -100,7 +100,7 @@ Error generating stack: `+i.message+`
 `,pf=Ne(sv)`
   text-decoration: none;
   color: inherit;
-`,jw="/assets/as-orginal-XY73yi3A.png",Lw=()=>P.jsxs(Tw,{children:[P.jsx(uu,{src:jw,w:100,mx:"xl",radius:"xl"}),P.jsxs(Ow,{children:[P.jsx(pf,{to:"/orders",children:P.jsx($i,{label:"Ordenes",leftSection:P.jsx(_w,{})})}),P.jsx(pf,{to:"/employees",children:P.jsx($i,{label:"Empleados",leftSection:P.jsx(Pw,{})})})]})]}),zw=()=>P.jsxs(dw,{children:[P.jsx(Lw,{}),P.jsxs(pw,{children:[P.jsx(Rw,{}),P.jsx(mw,{children:P.jsx(Xy,{})})]})]}),Iw=Ne.div`
+`,jw="/artes-serigraficas-frontend/assets/as-orginal-XY73yi3A.png",Lw=()=>P.jsxs(Tw,{children:[P.jsx(uu,{src:jw,w:100,mx:"xl",radius:"xl"}),P.jsxs(Ow,{children:[P.jsx(pf,{to:"/orders",children:P.jsx($i,{label:"Ordenes",leftSection:P.jsx(_w,{})})}),P.jsx(pf,{to:"/employees",children:P.jsx($i,{label:"Empleados",leftSection:P.jsx(Pw,{})})})]})]}),zw=()=>P.jsxs(dw,{children:[P.jsx(Lw,{}),P.jsxs(pw,{children:[P.jsx(Rw,{}),P.jsx(mw,{children:P.jsx(Xy,{})})]})]}),Iw=Ne.div`
   padding: 20px;
 `,Mw=Ne.h2`
 `,Aw=()=>P.jsxs(Iw,{children:[P.jsx(Mw,{children:"Orders Management"}),P.jsx("h4",{children:"We Are At Orders"})]}),Fw=Ne.div`
