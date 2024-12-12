@@ -1,32 +1,29 @@
 import { NavLink } from "@mantine/core";
+import { Image } from "@mantine/core";
 import * as S from "./sidebar.styles";
-import asOriginal from '../../../../assets/as-orginal.png';
-import { AiOutlineOrderedList } from "react-icons/ai";
-import { AiOutlineTeam } from "react-icons/ai";
-import { Image } from '@mantine/core';
+import asOriginal from "../../../../assets/as-orginal.png";
+import { AiOutlineOrderedList, AiOutlineTeam } from "react-icons/ai";
 
 export const Sidebar: React.FC = () => {
-
-    return (
-      <S.SidebarContainer>
-        <Image src={asOriginal} w={100} mx='xl' radius="xl"/>
-        <S.NavList>
-          {/* 📌.:BOTON DE ORDENES:. */}
-          <S.LinkItem to="/orders">
-            <NavLink
-              label="Ordenes"
-              leftSection={<AiOutlineOrderedList />}
-            ></NavLink>
-          </S.LinkItem>
-          {/* 📌.:BOTON DE EMPLEADOS:. */}
-          <S.LinkItem to="/employees">
-            <NavLink
-              label="Empleados"
-              leftSection={<AiOutlineTeam />}
-            ></NavLink>
-          </S.LinkItem>
-        </S.NavList>
-      </S.SidebarContainer>
-    );
-    
-}
+  return (
+    <S.SidebarContainer>
+      <Image src={asOriginal} w={100} mx="xl" radius="xl" />
+      <S.NavList>
+        {/* 📌.:BOTON DE ORDENES:. */}
+        <NavLink
+          component={S.LinkItem} // Use styled Link directly
+          to="/orders"
+          label="Ordenes"
+          leftSection={<AiOutlineOrderedList />}
+        />
+        {/* 📌.:BOTON DE EMPLEADOS:. */}
+        {/* <NavLink
+          component={S.LinkItem} // Use styled Link directly
+          to="/employees"
+          label="Empleados"
+          leftSection={<AiOutlineTeam />}
+        /> */}
+      </S.NavList>
+    </S.SidebarContainer>
+  );
+};

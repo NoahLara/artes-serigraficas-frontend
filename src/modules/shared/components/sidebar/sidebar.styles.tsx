@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link } from 'react-router-dom';
+import { NavLink as RouterNavLink } from "react-router-dom";
 
 export const SidebarContainer = styled.aside`
   width: 200px;
@@ -17,7 +17,12 @@ export const NavList = styled.ul`
   padding: 0;
 `;
 
-export const LinkItem = styled(Link)`
+export const LinkItem = styled(RouterNavLink)`
   text-decoration: none;
   color: inherit;
+  margin: 10px 0px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
 `;
