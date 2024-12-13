@@ -1,6 +1,7 @@
-import { Drawer, Image, Text } from "@mantine/core";
+import { Drawer, Flex, Image, Stack, Text } from "@mantine/core";
 import React from "react";
 import { Product } from "../../../../core/interfaces";
+import { NewOrderForm } from "../new-order-form/new-order-form";
 
 interface NewOrderDrawerProps {
   opened: boolean;
@@ -17,21 +18,29 @@ export const NewOrderDrawer: React.FC<NewOrderDrawerProps> = ({
     <>
       <Drawer
         opened={opened}
+        size="xl"
         onClose={onClose}
-        title={product.name}
+        title="Nuevo Pedido"
         position="right"
         overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
       >
         {/* Drawer content */}
 
-        <Image
-          src={product.image}
-          radius="sm"
-          style={{ border: `1px  grey red` }}
-          h={100}
-          w="auto"
-        />
-        <Text size="xs">ID: {product.id}</Text>
+        <Flex justify="flex-start" align="flex-start">
+          <Image
+            src={product.image}
+            radius="sm"
+            h={100}
+            w="auto"
+          />
+
+          <Stack align="flex-start" justify="center">
+            <Text size="sm" fw={900}>Producto: {product.name}</Text>
+            <Text size="xs">ID: {product.id}</Text>
+          </Stack>
+        </Flex>
+
+        <NewOrderForm />
       </Drawer>
     </>
   );
