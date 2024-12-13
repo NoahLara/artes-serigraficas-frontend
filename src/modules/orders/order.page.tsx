@@ -43,7 +43,7 @@ export const OrdersPage: React.FC = () => {
 
       {/* Grid de productos */}
       <S.GridProductsContainer>
-        <Grid >
+        <Grid>
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <Grid.Col key={product.id} span={3}>
@@ -62,8 +62,8 @@ export const OrdersPage: React.FC = () => {
               </Grid.Col>
             ))
           ) : (
-            <Text c="dimmed" mt="lg" ta="center">
-              No products found matching "{searchTerm}".
+            <Text c="dimmed" mt="lg" ta="center" p={40}>
+              No se encontraron productos para "{searchTerm}".
             </Text>
           )}
         </Grid>
