@@ -1,6 +1,8 @@
 import React from "react";
-import { Card as CardComponent, Image, Text } from "@mantine/core";
+import { Button, Card as CardComponent, Image, Text } from "@mantine/core";
 import { Product } from "../../core/interfaces";
+import { NewOrderDrawer } from "./components/new-order-drawer/new-order-drawer";
+import { useDisclosure } from "@mantine/hooks";
 
 interface CardProps {
   shadow: string;
@@ -27,22 +29,31 @@ export const Card: React.FC<CardProps> = ({
   text_margin_top,
   product,
 }) => {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
-    <CardComponent
-      shadow={shadow}
-      padding={padding}
-      radius={radius}
-      withBorder={withBorder}
-    >
-      <CardComponent.Section>
-        <Image src={product.image} alt={img_alt} />
-      </CardComponent.Section>
-      <Text fw={text_weight} mt={text_margin_top}>
-        {product.name}
-      </Text>
-      <Text size={text_size} color={text_color}>
-        Descrip
-      </Text>
-    </CardComponent>
+    <>
+      <CardComponent
+        shadow={shadow}
+        padding={padding}
+        radius={radius}
+        withBorder={withBorder}
+      >
+        <CardComponent.Section>
+          <Image src={product.image} alt={img_alt} />
+        </CardComponent.Section>
+        <Text fw={text_weight} mt={text_margin_top}>
+          {product.name}
+        </Text>
+        <Text size={text_size} color={text_color}>
+          Descripcion del Producto
+        </Text>
+        <Button variant="default" onClick={open}>
+          Open Drawer
+        </Button>
+      </CardComponent>
+
+      <NewOrderDrawer opened={opened} product={product} onClose={close} />
+    </>
   );
 };
