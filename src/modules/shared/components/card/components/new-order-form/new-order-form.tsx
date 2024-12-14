@@ -8,9 +8,12 @@ import {
   Radio,
   Select,
   Stack,
+  Table,
+  Text,
   TextInput,
 } from "@mantine/core";
-import { RiAddLine } from "react-icons/ri";
+import { useState } from "react";
+import { RiAddLine, RiDeleteBinLine } from "react-icons/ri";
 
 export const NewOrderForm = () => {
   const adultsSizeCatalog: string[] = [
@@ -34,6 +37,26 @@ export const NewOrderForm = () => {
     "l",
     "xl",
   ];
+
+  const [rows, setRows] = useState<
+    { talla: string; cantidad: number; color: string }[]
+  >([]);
+  const [talla, setTalla] = useState("");
+  const [cantidad, setCantidad] = useState<number>(0);
+  const [color, setColor] = useState("");
+
+  const addRow = () => {
+    if (talla && cantidad && color) {
+      setRows((prev) => [...prev, { talla, cantidad, color }]);
+      setTalla("");
+      setCantidad(0);
+      setColor("");
+    }
+  };
+
+  const deleteRow = (index: number) => {
+    setRows((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <form>
@@ -100,12 +123,14 @@ export const NewOrderForm = () => {
           </Flex>
 
           {/* TABLE FORM */}
-
           <Flex align="flex-end" gap={10}>
             <Select
               flex={0.3}
               size="xs"
               label="Talla"
+              placeholder="Seleccione una talla"
+              value={talla}
+              onChange={(value) => setTalla(value || "")}
               data={[
                 { group: "Ninos", items: youthSizeCatalog },
                 { group: "Adultos", items: adultsSizeCatalog },
@@ -115,8 +140,10 @@ export const NewOrderForm = () => {
             <NumberInput
               flex={1}
               size="xs"
-              label="Cantidad "
+              label="Cantidad"
               placeholder="Ingrese la cantidad"
+              value={cantidad}
+              onChange={(value) => setCantidad(value as number)}
               min={1}
               max={10000}
             />
@@ -126,14 +153,54 @@ export const NewOrderForm = () => {
               label="Color"
               placeholder="Ingrese el nombre de color"
               size="xs"
+              value={color}
+              onChange={(event) => setColor(event.target.value)}
             />
 
-            <ActionIcon variant="outline">
+            <ActionIcon variant="outline" onClick={addRow}>
               <RiAddLine size={18} stroke="1.5" />
             </ActionIcon>
           </Flex>
 
           {/* TABLE */}
+          <Table highlightOnHover mt="md">
+            <thead>
+              <tr>
+                <th align="left">Talla</th>
+                <th align="left">Cantidad</th>
+                <th align="left">Color</th>
+                <th align="left">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length > 0 ? (
+                rows.map((row, index) => (
+                  <tr key={index}>
+                    <td align="left">{row.talla}</td>
+                    <td align="left">{row.cantidad}</td>
+                    <td align="left">{row.color}</td>
+                    <td align="left">
+                      <ActionIcon
+                        color="red"
+                        variant="outline"
+                        onClick={() => deleteRow(index)}
+                      >
+                        <RiDeleteBinLine size={18} />
+                      </ActionIcon>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td>
+                    <Text size="xs" opacity={0.4}>
+                      Sin pedidos ingresados...
+                    </Text>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
         </Fieldset>
       </Stack>
     </form>
