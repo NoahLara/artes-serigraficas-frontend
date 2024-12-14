@@ -12,8 +12,12 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import { useState } from "react";
 import { RiAddLine, RiDeleteBinLine } from "react-icons/ri";
+import { BsShop, BsGeo } from "react-icons/bs";
+import { FaTruckFast } from "react-icons/fa6";
+import { DeliveryMethod, Pedido } from "./new-order-form.types";
 
 export const NewOrderForm = () => {
   const adultsSizeCatalog: string[] = [
@@ -38,25 +42,61 @@ export const NewOrderForm = () => {
     "xl",
   ];
 
-  const [rows, setRows] = useState<
-    { talla: string; cantidad: number; color: string }[]
-  >([]);
+  const deliveryMethods: DeliveryMethod[] = [
+    {
+      name: "Recoger en Tienda",
+      icon: BsShop, // Pass the component, not JSX
+    },
+    {
+      name: "Punto de Entrega",
+      icon: BsGeo,
+    },
+    {
+      name: "A Domicilio",
+      icon: FaTruckFast,
+    },
+  ];
+
+  const [rows, setRows] = useState<Pedido[]>([]);
   const [talla, setTalla] = useState("");
   const [cantidad, setCantidad] = useState<number>(0);
+  const [precio, setPrecio] = useState<number>(0.0);
   const [color, setColor] = useState("");
+  const [metodoEntrega, setMetodoEntrega] = useState<string>(
+    deliveryMethods[0].name
+  );
 
   const addRow = () => {
-    if (talla && cantidad && color) {
-      setRows((prev) => [...prev, { talla, cantidad, color }]);
+    if (talla && cantidad && precio && color) {
+      setRows((prev) => [...prev, { talla, cantidad, precio, color }]);
       setTalla("");
       setCantidad(0);
+      setPrecio(0.0);
       setColor("");
     }
+  };
+
+  const enablaAddDetailForm = () => {
+    return talla && cantidad && precio && color;
   };
 
   const deleteRow = (index: number) => {
     setRows((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const deliveryMethodsCards = deliveryMethods.map((item) => (
+    <Radio.Card radius="md" value={item.name} key={item.name}>
+      <Group wrap="nowrap" justify="center" align="center" p={20}>
+        <Stack gap={10} align="center">
+          <item.icon size={36} />
+          <Flex align="center" gap={10}>
+            <Radio.Indicator size="xs" />
+            <Text size="xs">{item.name}</Text>
+          </Flex>
+        </Stack>
+      </Group>
+    </Radio.Card>
+  ));
 
   return (
     <form>
@@ -80,8 +120,8 @@ export const NewOrderForm = () => {
           </Flex>
         </Fieldset>
 
-        {/* ORDER INFORMATION */}
-        <Fieldset legend="Pedido" radius="md">
+        {/* DETAIL ORDER INFORMATION */}
+        <Fieldset legend="Detalle del Pedido" radius="md">
           {/* EXAMPLE TSHIRT */}
           <Flex align="center" gap={10}>
             <Image
@@ -125,25 +165,38 @@ export const NewOrderForm = () => {
           {/* TABLE FORM */}
           <Flex align="flex-end" gap={10}>
             <Select
-              flex={0.3}
+              flex={0.4}
               size="xs"
               label="Talla"
               placeholder="Seleccione una talla"
               value={talla}
               onChange={(value) => setTalla(value || "")}
               data={[
-                { group: "Ninos", items: youthSizeCatalog },
+                { group: "Niños", items: youthSizeCatalog },
                 { group: "Adultos", items: adultsSizeCatalog },
               ]}
             />
 
             <NumberInput
               flex={1}
+              decimalScale={0}
               size="xs"
               label="Cantidad"
               placeholder="Ingrese la cantidad"
               value={cantidad}
               onChange={(value) => setCantidad(value as number)}
+              min={1}
+              max={10000}
+            />
+
+            <NumberInput
+              flex={1}
+              decimalScale={2}
+              size="xs"
+              label="Precio por unidad"
+              placeholder="Ingrese el precio"
+              value={precio}
+              onChange={(value) => setPrecio(value as number)}
               min={1}
               max={10000}
             />
@@ -157,7 +210,11 @@ export const NewOrderForm = () => {
               onChange={(event) => setColor(event.target.value)}
             />
 
-            <ActionIcon variant="outline" onClick={addRow}>
+            <ActionIcon
+              variant="outline"
+              onClick={addRow}
+              disabled={!enablaAddDetailForm()}
+            >
               <RiAddLine size={18} stroke="1.5" />
             </ActionIcon>
           </Flex>
@@ -168,8 +225,9 @@ export const NewOrderForm = () => {
               <tr>
                 <th align="left">Talla</th>
                 <th align="left">Cantidad</th>
+                <th align="left">Precio por Unidad</th>
                 <th align="left">Color</th>
-                <th align="left">Acciones</th>
+                <th align="left">Subtotal</th>
               </tr>
             </thead>
             <tbody>
@@ -178,8 +236,10 @@ export const NewOrderForm = () => {
                   <tr key={index}>
                     <td align="left">{row.talla}</td>
                     <td align="left">{row.cantidad}</td>
+                    <td align="left">${row.precio}</td>
                     <td align="left">{row.color}</td>
-                    <td align="left">
+                    <td align="left">${row.cantidad * row.precio}</td>
+                    <td align="center">
                       <ActionIcon
                         color="red"
                         variant="outline"
@@ -201,6 +261,41 @@ export const NewOrderForm = () => {
               )}
             </tbody>
           </Table>
+        </Fieldset>
+
+        {/* DELIVERY INFORMATION */}
+        <Fieldset legend="Informacion de Entrega">
+          <Flex align="center" gap={10}>
+            <DateTimePicker
+              flex={1}
+              size="xs"
+              lang="es"
+              clearable
+              valueFormat="DD MMM YYYY hh:mm A"
+              label="Fecha del pedido"
+              placeholder="Seleccione la fecha y hora"
+            />
+            <DateTimePicker
+              flex={1}
+              size="xs"
+              lang="es"
+              clearable
+              valueFormat="DD MMM YYYY hh:mm A"
+              label="Fecha de entrega del pedido"
+              placeholder="Seleccione la fecha y hora"
+            />
+          </Flex>
+          <Radio.Group
+            value={metodoEntrega}
+            mt={10}
+            size="xs"
+            onChange={setMetodoEntrega}
+            label="Tipo Entrega"
+          >
+            <Flex gap="xl">
+              {deliveryMethodsCards}
+            </Flex>
+          </Radio.Group>
         </Fieldset>
       </Stack>
     </form>

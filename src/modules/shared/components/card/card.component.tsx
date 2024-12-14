@@ -49,7 +49,7 @@ export const Card: React.FC<CardProps> = ({
           Descripcion del Producto
         </Text>
         <Button variant="default" onClick={open}>
-          Open Drawer
+          Crear orden
         </Button>
       </CardComponent>
 
