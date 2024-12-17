@@ -1,22 +1,22 @@
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
-import { MantineProvider } from '@mantine/core';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { MainLayout } from './modules/layouts/main-layout';
-import { OrdersPage } from './modules/orders/order.page';
-import { EmployeesPage } from './modules/employees/employees.page';
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import { MantineProvider } from "@mantine/core";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"; // Import Navigate
+import { MainLayout } from "./modules/layouts/main-layout";
+import { ProductsPage } from "./modules/products/products.page";
 
 export default function App() {
   return (
     <MantineProvider defaultColorScheme="dark">
-      <BrowserRouter basename="/artes-serigraficas-frontend">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="employees" element={<EmployeesPage />} />
+            <Route index element={<Navigate to="productos" replace />} />
+            <Route path="*" element={<Navigate to="productos" replace />} />
+            <Route path="productos" element={<ProductsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
     </MantineProvider>
   );
-} 
+}

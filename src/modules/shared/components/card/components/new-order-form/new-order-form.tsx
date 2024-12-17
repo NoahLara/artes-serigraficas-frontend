@@ -11,6 +11,7 @@ import {
   Table,
   Text,
   TextInput,
+  Button,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { useState } from "react";
@@ -45,7 +46,7 @@ export const NewOrderForm = () => {
   const deliveryMethods: DeliveryMethod[] = [
     {
       name: "Recoger en Tienda",
-      icon: BsShop, // Pass the component, not JSX
+      icon: BsShop,
     },
     {
       name: "Punto de Entrega",
@@ -62,6 +63,11 @@ export const NewOrderForm = () => {
   const [cantidad, setCantidad] = useState<number>(0);
   const [precio, setPrecio] = useState<number>(0.0);
   const [color, setColor] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [fechaPedido, setFechaPedido] = useState<Date | null>(null);
+  const [fechaEntrega, setFechaEntrega] = useState<Date | null>(null);
   const [metodoEntrega, setMetodoEntrega] = useState<string>(
     deliveryMethods[0].name
   );
@@ -82,6 +88,31 @@ export const NewOrderForm = () => {
 
   const deleteRow = (index: number) => {
     setRows((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const isFormComplete = () => {
+    return (
+      nombre &&
+      email &&
+      telefono &&
+      rows.length > 0 &&
+      fechaPedido &&
+      fechaEntrega &&
+      metodoEntrega
+    );
+  };
+
+  const handleGenerateOrder = () => {
+    if (isFormComplete()) {
+      const orderData = {
+        customer: { nombre, email, telefono },
+        orderDetails: rows,
+        deliveryInfo: { fechaPedido, fechaEntrega, metodoEntrega },
+      };
+      console.log("Pedido generado:", orderData);
+    } else {
+      alert("Por favor, complete todos los campos obligatorios.");
+    }
   };
 
   const deliveryMethodsCards = deliveryMethods.map((item) => (
@@ -109,14 +140,24 @@ export const NewOrderForm = () => {
               label="Nombre"
               placeholder="Miguel Antonio Torres Melara"
               size="xs"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
             />
             <TextInput
               flex={1}
               label="Email"
               placeholder="miguelan.eml20@gmail.com"
               size="xs"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <TextInput label="Telefono" placeholder="7723-2343" size="xs" />
+            <TextInput
+              label="Telefono"
+              placeholder="7723-2343"
+              size="xs"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+            />
           </Flex>
         </Fieldset>
 
@@ -154,7 +195,7 @@ export const NewOrderForm = () => {
                 <Radio.Group>
                   <Group mt="xs">
                     <Radio value="Unisex" label="Unisex" size="xs" />
-                    <Radio value="Mujer" label="Poliéster" size="xs" />
+                    <Radio value="Mujer" label="Mujer" size="xs" />
                     <Radio value="Hoodie" label="Hoodie" size="xs" />
                   </Group>
                 </Radio.Group>
@@ -274,6 +315,8 @@ export const NewOrderForm = () => {
               valueFormat="DD MMM YYYY hh:mm A"
               label="Fecha del pedido"
               placeholder="Seleccione la fecha y hora"
+              value={fechaPedido}
+              onChange={setFechaPedido}
             />
             <DateTimePicker
               flex={1}
@@ -283,21 +326,32 @@ export const NewOrderForm = () => {
               valueFormat="DD MMM YYYY hh:mm A"
               label="Fecha de entrega del pedido"
               placeholder="Seleccione la fecha y hora"
+              value={fechaEntrega}
+              onChange={setFechaEntrega}
             />
           </Flex>
           <Radio.Group
             value={metodoEntrega}
-            mt={10}
-            size="xs"
             onChange={setMetodoEntrega}
-            label="Tipo Entrega"
+            size="xs"
+            mt="xl"
+            variant="cards"
           >
-            <Flex gap="xl">
+            <Group mt="xs" gap={15}>
               {deliveryMethodsCards}
-            </Flex>
+            </Group>
           </Radio.Group>
         </Fieldset>
       </Stack>
+
+      <Button
+        size="xs"
+        color="blue"
+        onClick={handleGenerateOrder}
+        disabled={!isFormComplete()}
+      >
+        Generar Pedido
+      </Button>
     </form>
   );
 };

@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Text, TextInput, Title } from "@mantine/core";
-import * as S from "./orders.styles";
+import * as S from "./products.styles";
 
 import { Card } from "../shared/components/card/card.component";
-import { getProduct } from "./data/product.data";
 import { Product } from "../shared/core/interfaces";
 
-export const OrdersPage: React.FC = () => {
+export const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]); // Estado para los productos
   const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
 
   // UseEffect para cargar los productos una vez que el componente esté montado
   useEffect(() => {
     const fetchProducts = async () => {
-      const productResults = await getProduct(); // Obtener productos de manera asíncrona
-      setProducts(productResults); // Actualizar el estado de los productos
+      // const productResults = await getProduct(); // Obtener productos de manera asíncrona
+      setProducts([]); // Actualizar el estado de los productos
     };
 
     fetchProducts(); // Llamada a la función
