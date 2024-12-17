@@ -40,7 +40,7 @@ export const Card: React.FC<CardProps> = ({
         withBorder={withBorder}
       >
         <CardComponent.Section>
-          <Image src={product.image} alt={img_alt} />
+          <Image src={product.image} alt={img_alt} />{" "}
         </CardComponent.Section>
         <Text fw={text_weight} mt={text_margin_top}>
           {product.name}
