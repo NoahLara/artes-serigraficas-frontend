@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import { Grid, Text, TextInput, Title } from "@mantine/core";
+import { Button, Flex, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { RiAddLargeLine } from "react-icons/ri";
 import { useQuery } from "@apollo/client";
 import { GET_PRODUCTS } from "../../graphql/queries/getProducts.query";
-import { ProductsLoading } from "./components/products-loading.component";
+import { ProductsLoading } from "./components/products-loading/products-loading.component";
 import { Product } from "../shared/core/interfaces";
-import { Card } from "../shared/components/card/card.component";
+import { ProductsGrid } from "./components/products-grid/products-grid.component";
+import { NotFound } from "../shared/components/not-found/not-found.component";
+import { useDisclosure } from "@mantine/hooks";
+import { NewProductModal } from "./components/new-product-modal/new-product-modal.component";
 
 export const ProductsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // Search input state
+  const [
+    openedNewProductModal,
+    { open: openNewProduct, close: closeNewProduct },
+  ] = useDisclosure(false);
 
   const { loading, error, data } = useQuery<{ products: Product[] }>(
     GET_PRODUCTS
@@ -19,54 +27,49 @@ export const ProductsPage: React.FC = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Title order={2} mb="lg">
-        Productos
-      </Title>
+    <>
+      <div style={{ padding: "20px" }}>
+        <Flex justify="space-between" align="center">
+          <Title order={2} mb="lg">
+            Productos
+          </Title>
 
-      {/* Search Bar */}
-      <TextInput
-        placeholder="Buscar productos..."
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.target.value)}
-        mb="lg"
-        radius="md"
-        size="md"
-      />
+          <Tooltip label="Nuevo Producto" position="left">
+            <Button variant="default" onClick={openNewProduct}>
+              <RiAddLargeLine />
+            </Button>
+          </Tooltip>
+        </Flex>
 
-      {loading && <ProductsLoading />}
+        {/* Search Bar */}
+        <TextInput
+          placeholder="Buscar productos..."
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          mb="lg"
+          radius="md"
+          size="md"
+        />
 
-      {error && (
-        <Text c="red" ta="center" p={20}>
-          Error loading products.
-        </Text>
-      )}
+        {loading && <ProductsLoading />}
 
-      {/* Products Grid */}
-      <Grid gutter="md">
-        {filteredProducts && filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <Grid.Col key={product.productId} span={3}>
-              <Card
-                shadow="md"
-                padding="lg"
-                radius="md"
-                withBorder={false}
-                img_alt="product image"
-                text_weight={500}
-                text_size="sm"
-                text_color="dimmed"
-                text_margin_top="md"
-                product={product}
-              />
-            </Grid.Col>
-          ))
-        ) : (
-          <Text c="dimmed" mt="lg" ta="center" p={40}>
-            No se encontraron productos para "{searchTerm}".
+        {error && (
+          <Text c="red" ta="center" p={20}>
+            Hubo un error al cargar los productos, porfavor recargue la pagina.
           </Text>
         )}
-      </Grid>
-    </div>
+
+        {/* Products Grid */}
+        {filteredProducts && filteredProducts?.length > 0 ? (
+          <ProductsGrid filteredProducts={filteredProducts}></ProductsGrid>
+        ) : (
+          <NotFound
+            text={"No se encontraron coincidencias para" + searchTerm}
+          />
+        )}
+      </div>
+
+      <NewProductModal opened={openedNewProductModal} close={closeNewProduct} />
+    </>
   );
 };

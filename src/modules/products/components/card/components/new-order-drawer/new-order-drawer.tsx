@@ -1,6 +1,6 @@
 import { Drawer, Flex, Image, Stack, Text } from "@mantine/core";
 import React from "react";
-import { Product } from "../../../../core/interfaces";
+import { Product } from "../../../../../shared/core/interfaces";
 import { NewOrderForm } from "../new-order-form/new-order-form";
 
 interface NewOrderDrawerProps {

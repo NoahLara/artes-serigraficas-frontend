@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Card as CardComponent, Image, Text } from "@mantine/core";
-import { Product } from "../../core/interfaces";
+import { Product } from "../../../shared/core/interfaces";
 import { NewOrderDrawer } from "./components/new-order-drawer/new-order-drawer";
 import { useDisclosure } from "@mantine/hooks";
 
