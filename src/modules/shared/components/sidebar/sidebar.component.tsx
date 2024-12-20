@@ -12,7 +12,7 @@ export const Sidebar: React.FC = () => {
         {/* 📌.:BOTON DE ORDENES:. */}
         <NavLink
           component={S.LinkItem} // Use styled Link directly
-          to="/orders"
+          to="/productos"
           label="Productos"
           leftSection={<GiClothes />}
         />

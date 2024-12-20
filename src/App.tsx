@@ -13,8 +13,8 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainLayout />}>
-              <Route index element={<Navigate to="productos" replace />} />
-              <Route path="*" element={<Navigate to="productos" replace />} />
+              {/* <Route index element={<Navigate to="productos" replace />} />
+              <Route path="*" element={<Navigate to="productos" replace />} /> */}
               <Route path="productos" element={<ProductsPage />} />
             </Route>
           </Routes>
