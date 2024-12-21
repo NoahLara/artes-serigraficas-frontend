@@ -30,7 +30,6 @@ export const Card: React.FC<CardProps> = ({
   product,
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  console.log(product.image);
 
   return (
     <>
