@@ -27,15 +27,12 @@ export const NewOrderDrawer: React.FC<NewOrderDrawerProps> = ({
         {/* Drawer content */}
 
         <Flex justify="flex-start" align="flex-start">
-          <Image
-            src={product.image}
-            radius="sm"
-            h={100}
-            w="auto"
-          />
+          <Image src={product.image} radius="sm" h={100} w="auto" />
 
           <Stack align="flex-start" justify="center">
-            <Text size="sm" fw={900}>Producto: {product.name}</Text>
+            <Text size="sm" fw={900}>
+              Producto: {product.name}
+            </Text>
             <Text size="xs">ID: {product.id}</Text>
           </Stack>
         </Flex>

@@ -11,24 +11,27 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_PRODUCT } from "../../../../../graphql/queries/createProduct.query";
-import { PreviewImageNewProduct } from "./preview-image-new-product/preview-image-new-product.component";
-import { Category } from "../../../../shared/core/interfaces";
-import { GET_CATEGORIES } from "../../../../../graphql/queries/getCategories.query";
+import { Category, Product } from "../../../../../shared/core/interfaces";
+import { UPDATE_PRODUCT } from "../../../../../../graphql/queries/updateProduct.query";
+import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
+import { PreviewImageUpdateProduct } from "../preview-image-update-product/preview-image-update-product.component";
 
-interface ProductFormProps {
+interface UpdateProductFormProps {
+  product: Product;
   onSuccess: () => void;
   onClose: () => void;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({
+export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
+  product,
   onSuccess,
   onClose,
 }) => {
   const [
-    createProduct,
-    { loading: loadingCreateProduct, error: errorCreateProduct },
-  ] = useMutation(CREATE_PRODUCT);
+    updateProduct,
+    { loading: loadingUpdateProduct, error: errorUpdateProduct },
+  ] = useMutation(UPDATE_PRODUCT);
+
   const {
     loading: loadingCategories,
     error: errorCategories,
@@ -38,12 +41,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const form = useForm({
     initialValues: {
-      name: "",
-      price: 0.0,
-      SKU: "",
-      image: null as string | ArrayBuffer | null,
-      description: "",
-      categoryId: "",
+      name: product.name,
+      price: product.price / 100, // Convert from cents to dollars
+      SKU: product.SKU,
+      image: product.image || null,
+      description: product.description || "",
+      categoryId: product.categoryId || "",
     },
     validate: {
       name: (value) =>
@@ -61,13 +64,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     try {
       const imageBase64 = values.image;
       const currentPrice = values.price;
-      await createProduct({
+      await updateProduct({
         variables: {
-          input: { ...values, price: currentPrice * 100, image: imageBase64 },
+          id: product.productId,
+          updateProductInput: {
+            ...values,
+            price: Math.round(currentPrice * 100), // Convert back to cents
+            image: imageBase64,
+          },
         },
       });
 
-      form.reset();
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -75,7 +82,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onClose();
       }, 2000);
     } catch (err) {
-      console.error("Error creating product:", err);
+      console.error("Error updating product:", err);
     }
   };
 
@@ -86,8 +93,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       </Text>
       {/* PREVIEW IMAGE */}
       <Flex justify="center" align="center" p={25}>
-        <PreviewImageNewProduct
-          value={form.values.image}
+        <PreviewImageUpdateProduct
+          value={form.values.image} // Initialize with product.image
           onChange={(base64: string | ArrayBuffer | null) =>
             form.setFieldValue("image", base64)
           }
@@ -96,14 +103,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       </Flex>
 
       <TextInput
-        label="Nombre del Producto"
-        placeholder="e.g., Sample Product"
+        label="Product Name"
+        placeholder="e.g., Updated Product"
         withAsterisk
         {...form.getInputProps("name")}
       />
       <NumberInput
-        label="Precio"
-        placeholder="e.g., 100"
+        label="Price"
+        decimalScale={2}
+        placeholder="e.g., 10, 12.50, 5.50, 24.40"
         withAsterisk
         {...form.getInputProps("price")}
       />
@@ -115,8 +123,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       />
 
       <TextInput
-        label="Descripción"
-        placeholder="Describe el producto"
+        label="Description"
+        placeholder="Describe the product"
         {...form.getInputProps("description")}
       />
 
@@ -125,13 +133,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <Loader color="blue" />
         ) : errorCategories ? (
           <Alert title="Error" color="red" mt="lg">
-            No se pudieron cargar las categorías. Por favor, recargue la página.
+            Categories could not be loaded. Please refresh the page.
           </Alert>
         ) : (
           <Select
             w="100%"
-            label="Categoría"
-            placeholder="Selecciona una categoría"
+            label="Category"
+            placeholder="Select a category"
             withAsterisk
             data={
               categoriesData && categoriesData.categories
@@ -146,18 +154,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         )}
       </Flex>
 
-      <Button type="submit" fullWidth mt="lg" loading={loadingCreateProduct}>
-        Crear Producto
+      <Button type="submit" fullWidth mt="lg" loading={loadingUpdateProduct}>
+        Update Product
       </Button>
 
       {success && (
-        <Alert title="Éxito" color="green" mt="lg">
-          Producto creado con éxito.
+        <Alert title="Success" color="green" mt="lg">
+          Product updated successfully.
         </Alert>
       )}
-      {errorCreateProduct && (
+      {errorUpdateProduct && (
         <Alert title="Error" color="red" mt="lg">
-          {errorCreateProduct.message}
+          {errorUpdateProduct.message}
         </Alert>
       )}
     </form>
