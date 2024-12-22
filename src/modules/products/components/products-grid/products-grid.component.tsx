@@ -1,7 +1,7 @@
 import React from "react";
 import { ProductsGridProps } from "./products-grid.interfaces";
 import { Grid } from "@mantine/core";
-import { Card } from "../card/components/card/card.component";
+import { Card } from "../card/card.component";
 
 export const ProductsGrid: React.FC<ProductsGridProps> = ({
   filteredProducts,

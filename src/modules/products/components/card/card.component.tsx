@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Image, Card as CardComponent, Text } from "@mantine/core";
-import { Product } from "../../../../../shared/core/interfaces";
 import { useDisclosure } from "@mantine/hooks";
-import { ProductDetail } from "../../../update-product-modal/product-detail-modal.component";
+import { Product } from "../../../shared/core/interfaces";
+import { ProductDetail } from "../update-product-modal/product-detail-modal.component";
 
 interface CardProps {
   shadow: string;
