@@ -8,6 +8,7 @@ import {
   Flex,
   Text,
   Loader,
+  Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
@@ -51,15 +52,16 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
     },
     validate: {
       name: (value) =>
-        value.trim().length === 0 ? "Product name is required" : null,
-      retailPrice: (value) =>
-        value <= 0 ? "Price must be greater than zero" : null,
+        value.trim().length === 0 ? "Nombre del producto es obligatorio" : null,
+      retailPrice: (value) => (value <= 0 ? "Precio debe ser mayor a 0" : null),
       wholeSalePrice: (value) =>
-        value <= 0 ? "Price must be greater than zero" : null,
-      SKU: (value) => (value.trim().length === 0 ? "SKU is required" : null),
-      image: (value) => (!value ? "Image is required" : null),
+        value <= 0 ? "Precio debe ser mayor a 0" : null,
+      SKU: (value) =>
+        value.trim().length === 0 ? "Codigo SKU es obligatorio" : null,
+      image: (value) =>
+        !value ? "La imagen del producto es obligatoria" : null,
       categoryId: (value) =>
-        value.trim().length === 0 ? "Category is required" : null,
+        value.trim().length === 0 ? "La categoria es obligatoria" : null,
     },
   });
 
@@ -98,7 +100,7 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         Seleccione una imagen
       </Text>
       {/* PREVIEW IMAGE */}
-      <Flex justify="center" align="center" p={25}>
+      <Stack justify="center" align="center" p={25}>
         <PreviewImageUpdateProduct
           value={form.values.image} // Initialize with product.image
           onChange={(base64: string | ArrayBuffer | null) =>
@@ -106,11 +108,11 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
           }
         />
         {form.errors.image && <Alert color="red">{form.errors.image}</Alert>}
-      </Flex>
+      </Stack>
 
       <TextInput
-        label="Product Name"
-        placeholder="e.g., Updated Product"
+        label="Nombre del Producto"
+        placeholder="Ingrese nombre"
         withAsterisk
         {...form.getInputProps("name")}
       />
@@ -136,8 +138,8 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
       />
 
       <TextInput
-        label="Description"
-        placeholder="Describe the product"
+        label="Descripcion"
+        placeholder="Describa el producto"
         {...form.getInputProps("description")}
       />
 
@@ -146,13 +148,13 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
           <Loader color="blue" />
         ) : errorCategories ? (
           <Alert title="Error" color="red" mt="lg">
-            Categories could not be loaded. Please refresh the page.
+            Categorias no pudieron cargarse. Porfavor refresque la pagina.
           </Alert>
         ) : (
           <Select
             w="100%"
-            label="Category"
-            placeholder="Select a category"
+            label="Categoria"
+            placeholder="Seleccione una categoria"
             withAsterisk
             data={
               categoriesData && categoriesData.categories
@@ -168,12 +170,12 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
       </Flex>
 
       <Button type="submit" fullWidth mt="lg" loading={loadingUpdateProduct}>
-        Update Product
+        Modificar Producto
       </Button>
 
       {success && (
         <Alert title="Success" color="green" mt="lg">
-          Product updated successfully.
+          Product modificado exitosamente
         </Alert>
       )}
       {errorUpdateProduct && (

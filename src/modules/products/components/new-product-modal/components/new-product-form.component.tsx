@@ -8,6 +8,7 @@ import {
   Flex,
   Text,
   Loader,
+  Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
@@ -48,15 +49,22 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     },
     validate: {
       name: (value) =>
-        value.trim().length === 0 ? "Product name is required" : null,
+        value.trim().length === 0 ? "Nombre del producto es obligatorio" : null,
       retailPrice: (value) =>
-        value <= 0 ? "Price must be greater than zero" : null,
+        value <= 0 ? "Precio debe de ser mayor a 0" : null,
       wholeSalePrice: (value) =>
-        value <= 0 ? "Price must be greater than zero" : null,
-      SKU: (value) => (value.trim().length === 0 ? "SKU is required" : null),
-      image: (value) => (!value ? "Image is required" : null),
+        value <= 0 ? "Precio debe de ser mayor a 0" : null,
+      SKU: (value) => {
+        if (value.trim().length === 0) {
+          return "Codigo SKU es obligatorio";
+        } else if (value.trim().length < 3 || value.trim().length > 100) {
+          return "Codigo SKU debe tener almenos 3 caracteres";
+        }
+        return null;
+      },
+      image: (value) => (!value ? "Imagen del producto es obligatoria" : null),
       categoryId: (value) =>
-        value.trim().length === 0 ? "Category is required" : null,
+        value.trim().length === 0 ? "La categoria es obligatoria" : null,
     },
   });
 
@@ -96,7 +104,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         Seleccione una imagen
       </Text>
       {/* PREVIEW IMAGE */}
-      <Flex justify="center" align="center" p={25}>
+      <Stack justify="center" align="center" p={25}>
         <PreviewImageNewProduct
           value={form.values.image}
           onChange={(base64: string | ArrayBuffer | null) =>
@@ -104,7 +112,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           }
         />
         {form.errors.image && <Alert color="red">{form.errors.image}</Alert>}
-      </Flex>
+      </Stack>
 
       <TextInput
         label="Nombre del Producto"
