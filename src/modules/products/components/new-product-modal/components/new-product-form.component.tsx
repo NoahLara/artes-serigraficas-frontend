@@ -39,7 +39,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const form = useForm({
     initialValues: {
       name: "",
-      price: 0.0,
+      retailPrice: 0.0,
+      wholeSalePrice: 0.0,
       SKU: "",
       image: null as string | ArrayBuffer | null,
       description: "",
@@ -48,7 +49,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     validate: {
       name: (value) =>
         value.trim().length === 0 ? "Product name is required" : null,
-      price: (value) => (value <= 0 ? "Price must be greater than zero" : null),
+      retailPrice: (value) =>
+        value <= 0 ? "Price must be greater than zero" : null,
+      wholeSalePrice: (value) =>
+        value <= 0 ? "Price must be greater than zero" : null,
       SKU: (value) => (value.trim().length === 0 ? "SKU is required" : null),
       image: (value) => (!value ? "Image is required" : null),
       categoryId: (value) =>
@@ -60,10 +64,17 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setSuccess(false);
     try {
       const imageBase64 = values.image;
-      const currentPrice = values.price;
+      const currentRetailPrice = values.retailPrice;
+      const currentWholeSalePrice = values.wholeSalePrice;
+
       await createProduct({
         variables: {
-          input: { ...values, price: currentPrice * 100, image: imageBase64 },
+          input: {
+            ...values,
+            retailPrice: currentRetailPrice * 100,
+            wholeSalePrice: currentWholeSalePrice * 100,
+            image: imageBase64,
+          },
         },
       });
 
@@ -102,11 +113,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         {...form.getInputProps("name")}
       />
       <NumberInput
-        label="Precio"
-        placeholder="e.g., 100"
+        label="Precio al Detalle"
+        placeholder="e.g., 6.50"
+        decimalScale={2}
         withAsterisk
-        {...form.getInputProps("price")}
+        {...form.getInputProps("retailPrice")}
       />
+
+      <NumberInput
+        label="Precio por Mayor"
+        placeholder="e.g., 10.35"
+        decimalScale={2}
+        withAsterisk
+        {...form.getInputProps("wholeSalePrice")}
+      />
+
       <TextInput
         label="SKU"
         placeholder="e.g., PRODUCT01"

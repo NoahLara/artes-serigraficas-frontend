@@ -1,5 +1,12 @@
 import React from "react";
-import { Button, Image, Card as CardComponent, Text } from "@mantine/core";
+import {
+  Button,
+  Image,
+  Card as CardComponent,
+  Text,
+  Tooltip,
+  Flex,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Product } from "../../../shared/core/interfaces";
 import { ProductDetail } from "../update-product-modal/product-detail-modal.component";
@@ -24,9 +31,9 @@ export const Card: React.FC<CardProps> = ({
   withBorder,
   img_alt,
   text_weight,
-  text_size,
-  text_color,
-  text_margin_top,
+  // text_size,
+  // text_color,
+  // text_margin_top,
   product,
 }) => {
   const [
@@ -42,12 +49,13 @@ export const Card: React.FC<CardProps> = ({
         radius={radius}
         withBorder={withBorder}
         style={{
-          height: 400,
+          height: 375,
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
         }}
       >
+        {/* IMAGE */}
         <CardComponent.Section>
           <Image
             src={product.image}
@@ -55,17 +63,46 @@ export const Card: React.FC<CardProps> = ({
             style={{ objectFit: "contain", height: 200 }}
           />
         </CardComponent.Section>
-
-        <Text fw={text_weight} mt={text_margin_top} lineClamp={1}>
-          {product.name}
-        </Text>
-        <Text size="sm" color="dimmed" mb={10}>
-          ${(product.price / 100).toFixed(2)} {/* Display price */}
-        </Text>
-        <Text size={text_size} color={text_color} lineClamp={2}>
-          {product.description}
-        </Text>
-
+        {/* PRODUCT SKU */}
+        <Flex justify="center">
+          <Text fw={text_weight} size="xl">{product.SKU}</Text>
+        </Flex>
+        {/* PRODUCT NAME */}
+        <Text>{product.name}</Text>
+        {/* PRODUCT PRICES */}
+        <Flex justify="flex-start" align="center" gap="sm">
+          {/* RETAIL PRICE */}
+          <Flex align="center" gap="xs">
+            <Tooltip
+              label="Precio al Detalle: Este es el precio para ventas individuales."
+              position="top"
+            >
+              <Text size="sm" color="dimmed">
+                $
+                {product.retailPrice
+                  ? (product.retailPrice / 100).toFixed(2)
+                  : "N/A"}
+              </Text>
+            </Tooltip>
+          </Flex>
+          <Text size="sm" color="dimmed">
+            /
+          </Text>
+          {/* WHOLESALE PRICE */}
+          <Flex align="center" gap="xs">
+            <Tooltip
+              label="Precio por Mayor: Este es el precio para ventas en grandes cantidades."
+              position="top"
+            >
+              <Text size="sm" color="dimmed">
+                $
+                {product.wholeSalePrice
+                  ? (product.wholeSalePrice / 100).toFixed(2)
+                  : "N/A"}
+              </Text>
+            </Tooltip>
+          </Flex>
+        </Flex>
         <Button variant="default" onClick={openProductDetail} mt="auto">
           Detalle
         </Button>

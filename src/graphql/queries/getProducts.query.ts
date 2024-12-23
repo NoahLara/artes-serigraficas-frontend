@@ -5,7 +5,8 @@ export const GET_PRODUCTS = gql`
     products {
       productId
       name
-      price
+      retailPrice
+      wholeSalePrice
       SKU
       image
       description

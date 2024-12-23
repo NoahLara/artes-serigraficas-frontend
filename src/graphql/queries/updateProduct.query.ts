@@ -8,7 +8,8 @@ export const UPDATE_PRODUCT = gql`
     updateProduct(id: $id, updateProductInput: $updateProductInput) {
       productId
       name
-      price
+      retailPrice
+      wholeSalePrice
       SKU
       image
       description

@@ -42,7 +42,8 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
   const form = useForm({
     initialValues: {
       name: product.name,
-      price: product.price / 100, // Convert from cents to dollars
+      retailPrice: product.retailPrice / 100, // Convert from cents to dollars
+      wholeSalePrice: product.wholeSalePrice / 100, // Convert from cents to dollars
       SKU: product.SKU,
       image: product.image || null,
       description: product.description || "",
@@ -51,7 +52,10 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
     validate: {
       name: (value) =>
         value.trim().length === 0 ? "Product name is required" : null,
-      price: (value) => (value <= 0 ? "Price must be greater than zero" : null),
+      retailPrice: (value) =>
+        value <= 0 ? "Price must be greater than zero" : null,
+      wholeSalePrice: (value) =>
+        value <= 0 ? "Price must be greater than zero" : null,
       SKU: (value) => (value.trim().length === 0 ? "SKU is required" : null),
       image: (value) => (!value ? "Image is required" : null),
       categoryId: (value) =>
@@ -63,13 +67,15 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
     setSuccess(false);
     try {
       const imageBase64 = values.image;
-      const currentPrice = values.price;
+      const currentRetailPrice = values.retailPrice;
+      const currentWholeSalePrice = values.wholeSalePrice;
       await updateProduct({
         variables: {
           id: product.productId,
           updateProductInput: {
             ...values,
-            price: Math.round(currentPrice * 100), // Convert back to cents
+            retailPrice: Math.round(currentRetailPrice * 100), // Convert back to cents
+            wholeSalePrice: Math.round(currentWholeSalePrice * 100), // Convert back to cents
             image: imageBase64,
           },
         },
@@ -109,11 +115,18 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         {...form.getInputProps("name")}
       />
       <NumberInput
-        label="Price"
+        label="Precio al Detalle"
         decimalScale={2}
         placeholder="e.g., 10, 12.50, 5.50, 24.40"
         withAsterisk
-        {...form.getInputProps("price")}
+        {...form.getInputProps("retailPrice")}
+      />
+      <NumberInput
+        label="Precio por Mayor"
+        decimalScale={2}
+        placeholder="e.g., 10, 12.50, 5.50, 24.40"
+        withAsterisk
+        {...form.getInputProps("wholeSalePrice")}
       />
       <TextInput
         label="SKU"
