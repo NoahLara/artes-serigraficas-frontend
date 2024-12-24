@@ -17,7 +17,7 @@ export const ProductsPage: React.FC = () => {
     { open: openNewProduct, close: closeNewProduct },
   ] = useDisclosure(false);
 
-  const { loading, error, data } = useQuery<{ products: Product[] }>(
+  const { loading, error, data, refetch } = useQuery<{ products: Product[] }>(
     GET_PRODUCTS
   );
 
@@ -69,7 +69,11 @@ export const ProductsPage: React.FC = () => {
         )}
       </div>
 
-      <NewProductModal opened={openedNewProductModal} close={closeNewProduct} />
+      <NewProductModal
+        opened={openedNewProductModal}
+        close={closeNewProduct}
+        onSuccess={refetch}
+      />
     </>
   );
 };

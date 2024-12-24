@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   TextInput,
   NumberInput,
@@ -10,12 +9,15 @@ import {
   Loader,
   Stack,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { FaCheckCircle } from "react-icons/fa";
+import { VscError } from "react-icons/vsc";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_PRODUCT } from "../../../../../graphql/queries/createProduct.query";
-import { PreviewImageNewProduct } from "./preview-image-new-product/preview-image-new-product.component";
-import { Category } from "../../../../shared/core/interfaces";
-import { GET_CATEGORIES } from "../../../../../graphql/queries/getCategories.query";
+import { CREATE_PRODUCT } from "../../../../../../graphql/queries/createProduct.query";
+import { PreviewImageNewProduct } from "../preview-image-new-product/preview-image-new-product.component";
+import { Category } from "../../../../../shared/core/interfaces";
+import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
 
 interface ProductFormProps {
   onSuccess: () => void;
@@ -35,7 +37,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     error: errorCategories,
     data: categoriesData,
   } = useQuery<{ categories: Category[] }>(GET_CATEGORIES);
-  const [success, setSuccess] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -69,7 +70,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    setSuccess(false);
     try {
       const imageBase64 = values.image;
       const currentRetailPrice = values.retailPrice;
@@ -87,15 +87,34 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       });
 
       form.reset();
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        onSuccess();
-        onClose();
-      }, 2000);
+      onCreateSuccess();
+      onSuccess();
+      onClose();
     } catch (err) {
+      onCreateError();
       console.error("Error creating product:", err);
     }
+  };
+
+  const onCreateSuccess = () => {
+    notifications.show({
+      color: "teal",
+      icon: <FaCheckCircle />,
+      title: "Nuevo Producto",
+      message: `El producto ${form.values.SKU} has sido creado exitosamente`,
+      position: "top-right",
+      time: 5000,
+    });
+  };
+  const onCreateError = () => {
+    notifications.show({
+      color: "red",
+      icon: <VscError />,
+      title: "Nuevo Producto",
+      message: `El producto ${form.values.SKU} no se pudo crear, intentelo de nuevo`,
+      position: "top-right",
+    });
+    console.log("Error creating product: ", errorCreateProduct);
   };
 
   return (
@@ -175,20 +194,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         )}
       </Flex>
 
-      <Button type="submit" fullWidth mt="lg" loading={loadingCreateProduct}>
+      <Button
+        type="submit"
+        fullWidth
+        mt="lg"
+        loading={loadingCreateProduct}
+        disabled={loadingCreateProduct}
+      >
         Crear Producto
       </Button>
-
-      {success && (
-        <Alert title="Éxito" color="green" mt="lg">
-          Producto creado con éxito.
-        </Alert>
-      )}
-      {errorCreateProduct && (
-        <Alert title="Error" color="red" mt="lg">
-          {errorCreateProduct.message}
-        </Alert>
-      )}
     </form>
   );
 };

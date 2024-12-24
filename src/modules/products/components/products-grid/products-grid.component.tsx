@@ -10,7 +10,7 @@ export const ProductsGrid: React.FC<ProductsGridProps> = ({
     <Grid gutter="md">
       {filteredProducts &&
         filteredProducts.map((product) => (
-          <Grid.Col key={product.productId} span={3.3}>
+          <Grid.Col key={product.productId} span={3}>
             <Card
               shadow="md"
               padding="lg"
