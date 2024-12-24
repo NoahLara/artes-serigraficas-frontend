@@ -12,20 +12,30 @@ import {
   Radio,
   Group,
   Grid,
+  Divider,
+  Flex,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateTimePicker } from "@mantine/dates";
+import dayjs from "dayjs";
+import { BsGeo, BsShop } from "react-icons/bs";
+import { FaTruckFast } from "react-icons/fa6";
+import { DetailOrder } from "./components/detail-order/detail-order.component";
 
 interface OrderFormProps {
   onSuccess: () => void;
   onClose: () => void;
 }
 
-export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => {
+export const OrdersPage: React.FC<OrderFormProps> = ({
+  onSuccess,
+  onClose,
+}) => {
   const form = useForm({
     initialValues: {
       createdBy: "",
-      deliveryDate: "",
-      madeDate: "",
+      deliveryDate: null, // Default to null
+      madeDate: new Date(), // Default to current date
       orderSource: "",
       customerName: "",
       phoneNumber: "",
@@ -44,11 +54,9 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
           ? "El campo 'Creado por' es obligatorio"
           : null,
       deliveryDate: (value) =>
-        value.trim().length === 0 ? "La fecha de entrega es obligatoria" : null,
+        !value ? "La fecha de entrega es obligatoria" : null,
       madeDate: (value) =>
-        value.trim().length === 0
-          ? "La fecha de creación es obligatoria"
-          : null,
+        !value ? "La fecha de creación es obligatoria" : null,
       orderSource: (value) =>
         value.trim().length === 0
           ? "El origen del pedido es obligatorio"
@@ -73,7 +81,22 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
   });
 
   const handleSubmit = (values: typeof form.values) => {
-    console.log("Order Form Submitted:", values);
+    // Format `madeDate` correctly
+    const formattedValues = {
+      ...values,
+      madeDate: dayjs(values.madeDate, "dddd DD MMMM YYYY hh:mm A").format(
+        "dddd DD MMMM YYYY hh:mm A"
+      ),
+      deliveryDate: dayjs(
+        values.deliveryDate,
+        "dddd DD MMMM YYYY hh:mm A"
+      ).format("dddd DD MMMM YYYY hh:mm A"),
+    };
+
+    // Log the formatted values
+    console.log("Order Form Submitted:", formattedValues);
+
+    // Trigger success and close callbacks
     onSuccess();
     onClose();
   };
@@ -93,17 +116,22 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
               withAsterisk
               {...form.getInputProps("createdBy")}
             />
-            <TextInput
+            <DateTimePicker
               label="Fecha de entrega"
-              placeholder="YYYY-MM-DD"
+              placeholder="DD MMM YYYY hh:mm A"
+              valueFormat="dddd DD MMMM YYYY hh:mm A"
               withAsterisk
               {...form.getInputProps("deliveryDate")}
             />
-            <TextInput
+
+            <DateTimePicker
               label="Fecha de creación"
-              placeholder="YYYY-MM-DD"
+              placeholder="DD MMM YYYY hh:mm A"
+              valueFormat="dddd DD MMMM YYYY hh:mm A"
               withAsterisk
-              {...form.getInputProps("madeDate")}
+              {...form.getInputProps("madeDate", {
+                type: "input",
+              })}
             />
             <Select
               label="Origen del pedido"
@@ -140,7 +168,7 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
             />
           </Grid.Col>
         </Grid>
-
+        <Divider my="md" />
         {/* Payment Method and Delivery Method in one row */}
         <Grid>
           <Grid.Col span={6}>
@@ -191,11 +219,43 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
               withAsterisk
               {...form.getInputProps("deliveryMethod")}
             >
-              <Group mt="xs">
-                <Radio value="Envío a domicilio" label="Envío a domicilio" />
-                <Radio value="Recoge en local" label="Recoge en local" />
-                <Radio value="Punto de encuentro" label="Punto de encuentro" />
-              </Group>
+              <Flex justify="space-between" align="center" gap={20}>
+                <Radio.Card radius="md" value="A Domicilio">
+                  <Group wrap="nowrap" justify="center" align="center" p={20}>
+                    <Stack gap={10} align="center">
+                      <FaTruckFast size={36} />
+                      <Flex align="center" gap={10}>
+                        <Radio.Indicator size="xs" />
+                        <Text size="xs">A Domicilio</Text>
+                      </Flex>
+                    </Stack>
+                  </Group>
+                </Radio.Card>
+
+                <Radio.Card radius="md" value="En Local">
+                  <Group wrap="nowrap" justify="center" align="center" p={20}>
+                    <Stack gap={10} align="center">
+                      <BsShop size={36} />
+                      <Flex align="center" gap={10}>
+                        <Radio.Indicator size="xs" />
+                        <Text size="xs">En Local</Text>
+                      </Flex>
+                    </Stack>
+                  </Group>
+                </Radio.Card>
+
+                <Radio.Card radius="md" value="Punto">
+                  <Group wrap="nowrap" justify="center" align="center" p={20}>
+                    <Stack gap={10} align="center">
+                      <BsGeo size={36} />
+                      <Flex align="center" gap={10}>
+                        <Radio.Indicator size="xs" />
+                        <Text size="xs">Punto</Text>
+                      </Flex>
+                    </Stack>
+                  </Group>
+                </Radio.Card>
+              </Flex>
             </Radio.Group>
             {form.values.deliveryMethod === "Meeting Point" && (
               <TextInput
@@ -206,17 +266,22 @@ export const OrdersPage: React.FC<OrderFormProps> = ({ onSuccess, onClose }) => 
             )}
           </Grid.Col>
         </Grid>
-
+        <Divider my="md" />
+        {/* ORDER DETAIL*/}
+        <Text size="lg" fw={700}>
+          Detalle del Pedido
+        </Text>
+        <DetailOrder></DetailOrder>
+        {/* END ORDER DETAIL */}
+        <Divider my="md" />
         {/* Final Note */}
         <Text size="lg" fw={700}>
-          Nota Final
+          Nota Final19
         </Text>
         <Textarea
-          label="Nota"
           placeholder="Escribe alguna nota adicional"
           {...form.getInputProps("finalNote")}
         />
-
         {/* Submit Button */}
         <Button type="submit" fullWidth>
           Crear Pedido
