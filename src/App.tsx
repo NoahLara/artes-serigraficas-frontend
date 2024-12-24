@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"; // Im
 import { MainLayout } from "./modules/layouts/main-layout";
 import { ProductsPage } from "./modules/products/products.page";
 import { Notifications } from "@mantine/notifications";
+import { OrdersPage } from "./modules/orders/orders.page.js";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
               {/* <Route index element={<Navigate to="productos" replace />} />
               <Route path="*" element={<Navigate to="productos" replace />} /> */}
               <Route path="productos" element={<ProductsPage />} />
+              <Route path="ordenes" element={<OrdersPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
