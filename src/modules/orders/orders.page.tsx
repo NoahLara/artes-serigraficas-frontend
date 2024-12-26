@@ -104,6 +104,13 @@ export const OrdersPage: React.FC<OrderFormProps> = ({
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
+        {/* ORDER DETAIL*/}
+        <Text size="lg" fw={700}>
+          Detalle del Pedido
+        </Text>
+        <DetailOrder></DetailOrder>
+        {/* END ORDER DETAIL */}
+        <Divider my="md" />
         {/* Order Information and Client Information in one row */}
         <Grid>
           <Grid.Col span={6}>
@@ -266,13 +273,6 @@ export const OrdersPage: React.FC<OrderFormProps> = ({
             )}
           </Grid.Col>
         </Grid>
-        <Divider my="md" />
-        {/* ORDER DETAIL*/}
-        <Text size="lg" fw={700}>
-          Detalle del Pedido
-        </Text>
-        <DetailOrder></DetailOrder>
-        {/* END ORDER DETAIL */}
         <Divider my="md" />
         {/* Final Note */}
         <Text size="lg" fw={700}>

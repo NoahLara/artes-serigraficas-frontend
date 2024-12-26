@@ -1,11 +1,28 @@
 import React, { useState } from "react";
-import { TextInput, Card, Image, Text, Box, Flex } from "@mantine/core";
+import {
+  TextInput,
+  Card,
+  Image,
+  Text,
+  Box,
+  Flex,
+  NumberInput,
+  Stack,
+  Grid,
+  Divider,
+} from "@mantine/core";
 import { useQuery } from "@apollo/client";
 import { Product } from "../../../shared/core/interfaces";
 import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
+import { DetailOrderData } from "./detail-order.data";
+import { ProductByPerson } from "../../../shared/core/interfaces/product-by-person.interface";
+import { ProductSize } from "../../../shared/core/interfaces/product-size.interface";
 
 export const DetailOrder: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [detailOrder, setDetailOrder] = useState<ProductByPerson>({
+    ...DetailOrderData,
+  });
 
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
@@ -19,6 +36,24 @@ export const DetailOrder: React.FC = () => {
   const handleProductClick = (product: Product) => {
     console.log("Selected Product:", product);
   };
+
+  // Function to calculate totals for each person type
+  const calculateTotalByType = (type: ProductSize[]) => {
+    return type.reduce((total, detail) => {
+      if (detail.quantity > 0) {
+        return total + detail.quantity * detail.price;
+      }
+      return total;
+    }, 0);
+  };
+
+  // Calculate totals for each group
+  const totalHombre = calculateTotalByType(detailOrder.Hombre);
+  const totalMujer = calculateTotalByType(detailOrder.Mujer);
+  const totalNiño = calculateTotalByType(detailOrder.Niño);
+
+  // Calculate the global total
+  const globalTotal = totalHombre + totalMujer + totalNiño;
 
   return (
     <Box style={{ padding: "20px" }}>
@@ -37,6 +72,7 @@ export const DetailOrder: React.FC = () => {
           display: "flex",
           overflowX: "auto",
           gap: "1rem",
+          marginBottom: "50px",
         }}
       >
         {loading && <Text>Cargando productos...</Text>}
@@ -72,6 +108,176 @@ export const DetailOrder: React.FC = () => {
           <Text>No se encontraron productos.</Text>
         )}
       </Box>
+
+      {/* DETAIL ORDER */}
+      <Grid>
+        {/* HOMBRE */}
+        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+          <Text size="md" fw={700}>
+            HOMBRE
+          </Text>
+          <Stack gap="lg" mt="sm">
+            {detailOrder.Hombre.map((detail, index) => (
+              <Flex gap={20} key={`hombre-${index}`}>
+                <TextInput
+                  size="xs"
+                  label="Talla"
+                  value={String(detail.name)}
+                  disabled
+                />
+                <NumberInput
+                  size="xs"
+                  label="Cantidad"
+                  value={detail.quantity}
+                  onChange={(value) => {
+                    const updatedHombre = [...detailOrder.Hombre];
+                    updatedHombre[index].quantity =
+                      parseInt(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Hombre: updatedHombre,
+                    }));
+                  }}
+                  min={0}
+                />
+                <NumberInput
+                  size="xs"
+                  label="Precio"
+                  value={detail.price}
+                  decimalScale={2}
+                  onChange={(value) => {
+                    const updatedHombre = [...detailOrder.Hombre];
+                    updatedHombre[index].price =
+                      parseFloat(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Hombre: updatedHombre,
+                    }));
+                  }}
+                  min={0}
+                />
+              </Flex>
+            ))}
+          </Stack>
+          <Text size="lg" fw={700} mt="lg">
+            Total HOMBRE: ${totalHombre.toFixed(2)}
+          </Text>
+        </Grid.Col>
+
+        {/* MUJER */}
+        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+          <Text size="md" fw={700}>
+            MUJER
+          </Text>
+          <Stack gap="lg" mt="sm">
+            {detailOrder.Mujer.map((detail, index) => (
+              <Flex gap={20} key={`mujer-${index}`}>
+                <TextInput
+                  size="xs"
+                  label="Talla"
+                  value={String(detail.name)}
+                  disabled
+                />
+                <NumberInput
+                  size="xs"
+                  label="Cantidad"
+                  value={detail.quantity}
+                  onChange={(value) => {
+                    const updatedMujer: ProductSize[] = [...detailOrder.Mujer];
+                    updatedMujer[index].quantity =
+                      parseInt(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Mujer: updatedMujer,
+                    }));
+                  }}
+                  min={0}
+                />
+                <NumberInput
+                  size="xs"
+                  label="Precio"
+                  value={detail.price}
+                  decimalScale={2}
+                  onChange={(value) => {
+                    const updatedMujer = [...detailOrder.Mujer];
+                    updatedMujer[index].price =
+                      parseFloat(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Mujer: updatedMujer,
+                    }));
+                  }}
+                  min={0}
+                />
+              </Flex>
+            ))}
+          </Stack>
+          <Text size="lg" fw={700} mt="lg">
+            Total MUJER: ${totalMujer.toFixed(2)}
+          </Text>
+        </Grid.Col>
+
+        {/* NIÑO */}
+        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+          <Text size="md" fw={700}>
+            NIÑOS
+          </Text>
+          <Stack gap="lg" mt="sm">
+            {detailOrder.Niño.map((detail, index) => (
+              <Flex gap={20} key={`niño-${index}`}>
+                <TextInput
+                  size="xs"
+                  label="Talla"
+                  value={String(detail.name)}
+                  disabled
+                />
+                <NumberInput
+                  size="xs"
+                  label="Cantidad"
+                  value={detail.quantity}
+                  onChange={(value) => {
+                    const updatedNiño = [...detailOrder.Niño];
+                    updatedNiño[index].quantity =
+                      parseInt(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Niño: updatedNiño,
+                    }));
+                  }}
+                  min={0}
+                />
+                <NumberInput
+                  size="xs"
+                  label="Precio"
+                  value={detail.price}
+                  decimalScale={2}
+                  onChange={(value) => {
+                    const updatedNiño = [...detailOrder.Niño];
+                    updatedNiño[index].price =
+                      parseFloat(String(value ?? "0")) || 0;
+                    setDetailOrder((prev) => ({
+                      ...prev,
+                      Niño: updatedNiño,
+                    }));
+                  }}
+                  min={0}
+                />
+              </Flex>
+            ))}
+          </Stack>
+          <Text size="lg" fw={700} mt="lg">
+            Total NIÑOS: ${totalNiño.toFixed(2)}
+          </Text>
+        </Grid.Col>
+      </Grid>
+
+      {/* GLOBAL TOTAL */}
+      <Divider my="lg" />
+      <Flex justify="center" mt="lg">
+        <Text size="xl" fw={900}>
+          TOTAL GLOBAL: ${globalTotal.toFixed(2)}
+        </Text>
+      </Flex>
     </Box>
   );
 };
