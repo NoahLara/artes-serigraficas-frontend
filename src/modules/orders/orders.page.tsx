@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import {
   TextInput,
   NumberInput,
@@ -25,6 +25,8 @@ import { DetailOrder } from "./components/detail-order/detail-order.component";
 import { Product } from "../shared/core/interfaces";
 import { ProductByPerson } from "../shared/core/interfaces/product-by-person.interface";
 import { DetailOrderData } from "./components/detail-order/detail-order.data";
+import OrderPDF from "../shared/components/pdf-formats/order.pdf";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 export const OrdersPage = () => {
   const form = useForm({
@@ -108,6 +110,7 @@ export const OrdersPage = () => {
   const [detailOrder, setDetailOrder] = useState<ProductByPerson>({
     ...DetailOrderData,
   });
+  const [pdfData, setPdfData] = useState<ReactElement | null>(null);
 
   const handleSubmit = (values: typeof form.values) => {
     // Format `madeDate` correctly
@@ -128,6 +131,19 @@ export const OrdersPage = () => {
     console.log("Detail Order:", detailOrder);
 
     console.log("Product:", selectedProduct);
+
+    const pdfDocument = selectedProduct && (
+      <OrderPDF
+        customerName={values.customerName}
+        orderDate={formattedValues.madeDate}
+        detailOrder={detailOrder}
+        formattedValues={formattedValues}
+        selectedProduct={selectedProduct}
+      />
+    );
+
+    // Save the PDF document in the state for rendering
+    setPdfData(pdfDocument);
   };
 
   return (
@@ -456,6 +472,16 @@ export const OrdersPage = () => {
               Crear Pedido
             </Button>
           </>
+        )}
+
+        {/* PDF Download Link (only visible after submission) */}
+        {pdfData && (
+          <PDFDownloadLink
+            document={pdfData}
+            fileName={`order-invoice-${Date.now()}.pdf`}
+          >
+            Descargar PDF
+          </PDFDownloadLink>
         )}
       </Stack>
     </form>
