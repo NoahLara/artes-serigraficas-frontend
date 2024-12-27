@@ -10,7 +10,9 @@ import {
   Stack,
   Grid,
   Divider,
+  Button,
 } from "@mantine/core";
+import { IoArrowBackCircle } from "react-icons/io5";
 import { useQuery } from "@apollo/client";
 import { Product } from "../../../shared/core/interfaces";
 import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
@@ -20,6 +22,7 @@ import { ProductSize } from "../../../shared/core/interfaces/product-size.interf
 
 export const DetailOrder: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailOrder, setDetailOrder] = useState<ProductByPerson>({
     ...DetailOrderData,
   });
@@ -34,7 +37,41 @@ export const DetailOrder: React.FC = () => {
   );
 
   const handleProductClick = (product: Product) => {
-    console.log("Selected Product:", product);
+    setSelectedProduct(product);
+    setDefaultPrices(product);
+  };
+
+  const handleChangeProduct = () => {
+    setSelectedProduct(null);
+    resetDefaultPrices();
+  };
+
+  const setDefaultPrices = (product: Product) => {
+    detailOrder.Hombre.forEach((detail) => {
+      detail.price = product.retailPrice / 100;
+    });
+
+    detailOrder.Mujer.forEach((detail) => {
+      detail.price = product.retailPrice / 100;
+    });
+
+    detailOrder.Niño.forEach((detail) => {
+      detail.price = product.retailPrice / 100;
+    });
+  };
+
+  const resetDefaultPrices = () => {
+    detailOrder.Hombre.forEach((detail) => {
+      detail.price = 0.0;
+    });
+
+    detailOrder.Mujer.forEach((detail) => {
+      detail.price = 0.0;
+    });
+
+    detailOrder.Niño.forEach((detail) => {
+      detail.price = 0.0;
+    });
   };
 
   // Function to calculate totals for each person type
@@ -57,62 +94,101 @@ export const DetailOrder: React.FC = () => {
 
   return (
     <Box style={{ padding: "20px" }}>
-      {/* Search Bar */}
-      <TextInput
-        placeholder="Buscar productos por nombre o SKU..."
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.target.value)}
-        mb="lg"
-      />
+      {/* SEARCH INPUT AND LIST */}
+      {!selectedProduct ? (
+        <>
+          {/* Search Bar */}
+          <TextInput
+            placeholder="Buscar productos por nombre o SKU..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            mb="lg"
+          />
 
-      {/* Product Grid with Horizontal Scroll */}
-      <Box
-        style={{
-          maxWidth: "1200px",
-          display: "flex",
-          overflowX: "auto",
-          gap: "1rem",
-          marginBottom: "50px",
-        }}
-      >
-        {loading && <Text>Cargando productos...</Text>}
-        {error && (
-          <Text color="red">Hubo un error al cargar los productos.</Text>
-        )}
-        {filteredProducts?.length > 0 ? (
-          filteredProducts.map((product: Product) => (
-            <Card
-              key={product.productId}
-              style={{
-                maxWidth: "150px",
-                flex: "0 0 auto",
-                cursor: "pointer",
-              }}
-              onClick={() => handleProductClick(product)}
-            >
-              <Card.Section>
-                <Image
-                  src={product.image}
-                  alt="product image"
-                  style={{ objectFit: "contain" }}
-                />
-              </Card.Section>
-              <Flex justify="center">
-                <Text fw={800} size="xl">
-                  {product.SKU}
-                </Text>
-              </Flex>
-            </Card>
-          ))
-        ) : (
-          <Text>No se encontraron productos.</Text>
-        )}
-      </Box>
+          {/* Product Grid with Horizontal Scroll */}
+          <Box
+            style={{
+              maxWidth: "1200px",
+              display: "flex",
+              overflowX: "auto",
+              gap: "1rem",
+              marginBottom: "50px",
+            }}
+          >
+            {loading && <Text>Cargando productos...</Text>}
+            {error && (
+              <Text color="red">Hubo un error al cargar los productos.</Text>
+            )}
+            {filteredProducts?.length > 0 ? (
+              filteredProducts.map((product: Product) => (
+                <Card
+                  key={product.productId}
+                  style={{
+                    maxWidth: "150px",
+                    flex: "0 0 auto",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleProductClick(product)}
+                >
+                  <Card.Section>
+                    <Image
+                      src={product.image}
+                      alt="product image"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </Card.Section>
+                  <Flex justify="center">
+                    <Text fw={800} size="xl">
+                      {product.SKU}
+                    </Text>
+                  </Flex>
+                </Card>
+              ))
+            ) : (
+              <Text>No se encontraron productos.</Text>
+            )}
+          </Box>
+        </>
+      ) : (
+        <Stack mb={20}>
+          <Flex justify="flex-start" align="flex-start" mb={20}>
+            <Image
+              src={selectedProduct.image}
+              h={200}
+              w="auto"
+              mr={10}
+              style={{ borderRight: "1px solid grey" }}
+            />
+
+            <Stack align="flex-start" justify="center">
+              <Button
+                size="sm"
+                type="submit"
+                variant="light"
+                leftSection={<IoArrowBackCircle />}
+                onClick={handleChangeProduct}
+              >
+                Regresar a lista
+              </Button>
+              <Text size="lg">
+                <strong> SKU:</strong>
+                {selectedProduct.SKU}
+              </Text>
+              <Text size="lg">
+                <strong> Producto:</strong> {selectedProduct.name}
+              </Text>
+              <Text size="lg">
+                <strong> Descripción:</strong> {selectedProduct.description}
+              </Text>
+            </Stack>
+          </Flex>
+        </Stack>
+      )}
 
       {/* DETAIL ORDER */}
       <Grid>
         {/* HOMBRE */}
-        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+        <Grid.Col span={4} style={{ borderLeft: "1px solid grey" }}>
           <Text size="md" fw={700}>
             HOMBRE
           </Text>
@@ -160,12 +236,12 @@ export const DetailOrder: React.FC = () => {
             ))}
           </Stack>
           <Text size="lg" fw={700} mt="lg">
-            Total HOMBRE: ${totalHombre.toFixed(2)}
+            Subtotal ${totalHombre.toFixed(2)}
           </Text>
         </Grid.Col>
 
         {/* MUJER */}
-        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+        <Grid.Col span={4} style={{ borderLeft: "1px solid grey" }}>
           <Text size="md" fw={700}>
             MUJER
           </Text>
@@ -213,12 +289,12 @@ export const DetailOrder: React.FC = () => {
             ))}
           </Stack>
           <Text size="lg" fw={700} mt="lg">
-            Total MUJER: ${totalMujer.toFixed(2)}
+            Subtotal: ${totalMujer.toFixed(2)}
           </Text>
         </Grid.Col>
 
         {/* NIÑO */}
-        <Grid.Col span={4} style={{ border: "1px solid grey" }}>
+        <Grid.Col span={4} style={{ borderLeft: "1px solid grey" }}>
           <Text size="md" fw={700}>
             NIÑOS
           </Text>
@@ -266,7 +342,7 @@ export const DetailOrder: React.FC = () => {
             ))}
           </Stack>
           <Text size="lg" fw={700} mt="lg">
-            Total NIÑOS: ${totalNiño.toFixed(2)}
+            Subtotal: ${totalNiño.toFixed(2)}
           </Text>
         </Grid.Col>
       </Grid>
