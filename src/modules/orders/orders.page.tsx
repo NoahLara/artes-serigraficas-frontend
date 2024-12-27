@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TextInput,
   NumberInput,
@@ -21,16 +21,11 @@ import dayjs from "dayjs";
 import { BsGeo, BsShop } from "react-icons/bs";
 import { FaTruckFast } from "react-icons/fa6";
 import { DetailOrder } from "./components/detail-order/detail-order.component";
+import { Product } from "../shared/core/interfaces";
+import { ProductByPerson } from "../shared/core/interfaces/product-by-person.interface";
+import { DetailOrderData } from "./components/detail-order/detail-order.data";
 
-interface OrderFormProps {
-  onSuccess: () => void;
-  onClose: () => void;
-}
-
-export const OrdersPage: React.FC<OrderFormProps> = ({
-  onSuccess,
-  onClose,
-}) => {
+export const OrdersPage = () => {
   const form = useForm({
     initialValues: {
       createdBy: "",
@@ -80,6 +75,11 @@ export const OrdersPage: React.FC<OrderFormProps> = ({
     },
   });
 
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [detailOrder, setDetailOrder] = useState<ProductByPerson>({
+    ...DetailOrderData,
+  });
+
   const handleSubmit = (values: typeof form.values) => {
     // Format `madeDate` correctly
     const formattedValues = {
@@ -96,9 +96,9 @@ export const OrdersPage: React.FC<OrderFormProps> = ({
     // Log the formatted values
     console.log("Order Form Submitted:", formattedValues);
 
-    // Trigger success and close callbacks
-    onSuccess();
-    onClose();
+    console.log("Detail Order:", detailOrder);
+
+    console.log("Product:", selectedProduct);
   };
 
   return (
@@ -108,7 +108,12 @@ export const OrdersPage: React.FC<OrderFormProps> = ({
         <Text size="lg" fw={700}>
           Detalle del Pedido
         </Text>
-        <DetailOrder></DetailOrder>
+        <DetailOrder
+          detailOrder={detailOrder}
+          setDetailOrder={setDetailOrder}
+          selectedProduct={selectedProduct}
+          setSelectedProduct={setSelectedProduct}
+        />
         {/* END ORDER DETAIL */}
         <Divider my="md" />
         {/* Order Information and Client Information in one row */}

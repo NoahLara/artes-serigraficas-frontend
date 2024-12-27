@@ -16,16 +16,16 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { useQuery } from "@apollo/client";
 import { Product } from "../../../shared/core/interfaces";
 import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
-import { DetailOrderData } from "./detail-order.data";
-import { ProductByPerson } from "../../../shared/core/interfaces/product-by-person.interface";
 import { ProductSize } from "../../../shared/core/interfaces/product-size.interface";
+import { DetailOrderProps } from "./detail.order.interface";
 
-export const DetailOrder: React.FC = () => {
+export const DetailOrder: React.FC<DetailOrderProps> = ({
+  detailOrder,
+  setDetailOrder,
+  selectedProduct,
+  setSelectedProduct,
+}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [detailOrder, setDetailOrder] = useState<ProductByPerson>({
-    ...DetailOrderData,
-  });
 
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
