@@ -14,6 +14,7 @@ import {
   Grid,
   Divider,
   Flex,
+  Checkbox,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { DateTimePicker } from "@mantine/dates";
@@ -28,6 +29,14 @@ import { DetailOrderData } from "./components/detail-order/detail-order.data";
 export const OrdersPage = () => {
   const form = useForm({
     initialValues: {
+      neckType: "",
+      sizeAndFit: "",
+      color: "",
+      fabricThickness: 0,
+      specialProperties: [],
+      sleeveType: "",
+      customizationTechniques: "",
+      customizationLocations: [],
       createdBy: "",
       deliveryDate: null, // Default to null
       madeDate: new Date(), // Default to current date
@@ -44,6 +53,26 @@ export const OrdersPage = () => {
       finalNote: "",
     },
     validate: {
+      neckType: (value) =>
+        value.trim().length === 0
+          ? "El campo 'Tipo de Cuello' es obligatorio"
+          : null,
+      sizeAndFit: (value) =>
+        value.trim().length === 0
+          ? "El campo 'Proporcion' es obligatorio"
+          : null,
+      fabricThickness: (value) =>
+        value === 0 ? "El campo 'Gramage' es obligatorio" : null,
+      sleeveType: (value) =>
+        value.trim().length === 0
+          ? "El campo 'Tipo de Manga' es obligatorio"
+          : null,
+      customizationTechniques: (value) =>
+        value.trim().length === 0 ? "El campo 'Tecnica' es obligatorio" : null,
+      customizationLocations: (value) =>
+        value.length === 0
+          ? "El campo 'Lados a estampar' es obligatorio"
+          : null,
       createdBy: (value) =>
         value.trim().length === 0
           ? "El campo 'Creado por' es obligatorio"
@@ -115,6 +144,119 @@ export const OrdersPage = () => {
           setSelectedProduct={setSelectedProduct}
         />
         {/* END ORDER DETAIL */}
+        {/* ORDER OPTIONS */}
+        <Divider my="md" />
+        <Grid>
+          <Grid.Col span={6}>
+            <Stack>
+              {/* TIPO DE CUELLO */}
+              <Radio.Group
+                label="Tipo de Cuello:"
+                withAsterisk
+                {...form.getInputProps("neckType")}
+              >
+                <Group mt="xs">
+                  <Radio value="Redondo" label="Redondo" />
+                  <Radio value="V" label="V" />
+                  <Radio value="Polo" label="Polo" />
+                </Group>
+              </Radio.Group>
+              {/* Gramaje */}
+              <Radio.Group
+                label="Gramage:"
+                withAsterisk
+                {...form.getInputProps("fabricThickness")}
+              >
+                <Group mt="xs">
+                  <Radio value="170" label="170" />
+                  <Radio value="180" label="180" />
+                  <Radio value="190" label="190" />
+                </Group>
+              </Radio.Group>
+              {/* TAMANO Y MEDIDA */}
+              <Radio.Group
+                label="Proporcion:"
+                withAsterisk
+                {...form.getInputProps("sizeAndFit")}
+              >
+                <Group mt="xs">
+                  <Radio value="Ovisize/Agrandado" label="Ovisize/Agrandado" />
+                  <Radio value="Normal" label="Normal" />
+                  <Radio value="Stretch" label="Stretch" />
+                </Group>
+              </Radio.Group>
+              {/* Color */}
+              <TextInput
+                label="Color: "
+                placeholder="Color de Camisas"
+                {...form.getInputProps("color")}
+              />
+              {/* Propiedades Especiales */}
+              <Checkbox.Group
+                defaultValue={["react"]}
+                label="Propiedades especiales"
+                {...form.getInputProps("specialProperties")}
+              >
+                <Group mt="xs">
+                  <Checkbox value="Reflectiva" label="Reflectiva" />
+                  <Checkbox value="Impermeable" label="Impermeable" />
+                  <Checkbox value="Elástica" label="Elástica" />
+                  <Checkbox value="Antimicrobiana" label="Antimicrobiana" />
+                  <Checkbox value="Ignífuga" label="Ignífuga" />
+                  <Checkbox value="Corta viento" label="Corta viento" />
+                  <Checkbox value="Respirable" label="Respirable" />
+                  <Checkbox value="Anti-Rayos UV" label="Anti-Rayos UV" />
+                  <Checkbox value="Antiestática" label="Antiestática" />
+                </Group>
+              </Checkbox.Group>
+            </Stack>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Stack>
+              {/* Tipo de Mangas */}
+              <Radio.Group
+                label="Tipo de Mangas:"
+                withAsterisk
+                {...form.getInputProps("sleeveType")}
+              >
+                <Group mt="xs">
+                  <Radio value="Manga Corta" label="Manga Corta" />
+                  <Radio value="Manga Larga" label="Manga Larga" />
+                  <Radio value="Manga 3/4" label="Manga 3/4" />
+                  <Radio
+                    value="Manga hasta el codo"
+                    label="Manga hasta el codo"
+                  />
+                </Group>
+              </Radio.Group>
+              {/* Tecnicas*/}
+              <Radio.Group
+                label="Tecnica:"
+                withAsterisk
+                {...form.getInputProps("customizationTechniques")}
+              >
+                <Group mt="xs">
+                  <Radio value="Sublimacion" label="Sublimacion" />
+                  <Radio value="Serigrafia" label="Serigrafia" />
+                  <Radio value="Vinil" label="Vinil" />
+                  <Radio value="Bordado" label="Bordado" />
+                </Group>
+              </Radio.Group>
+              {/* Lados de estapado*/}
+              <Checkbox.Group
+                defaultValue={["react"]}
+                label="Lados a estampar:"
+                {...form.getInputProps("customizationLocations")}
+              >
+                <Group mt="xs">
+                  <Checkbox value="Pecho" label="Pecho" />
+                  <Checkbox value="Espalda" label="Espalda" />
+                  <Checkbox value="Manga" label="Manga" />
+                </Group>
+              </Checkbox.Group>
+            </Stack>
+          </Grid.Col>
+        </Grid>
         <Divider my="md" />
         {/* Order Information and Client Information in one row */}
         <Grid>
