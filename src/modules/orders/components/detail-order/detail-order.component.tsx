@@ -13,6 +13,8 @@ import {
   Button,
 } from "@mantine/core";
 import { IoArrowBackCircle } from "react-icons/io5";
+import { PiCoinsBold } from "react-icons/pi";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { useQuery } from "@apollo/client";
 import { Product } from "../../../shared/core/interfaces";
 import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
@@ -38,7 +40,6 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
-    setDefaultPrices(product);
   };
 
   const handleChangeProduct = () => {
@@ -57,6 +58,20 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
 
     detailOrder.Niño.forEach((detail) => {
       detail.price = product.retailPrice / 100;
+    });
+  };
+
+  const setWhoSalePrices = (product: Product) => {
+    detailOrder.Hombre.forEach((detail) => {
+      detail.price = product.wholeSalePrice / 100;
+    });
+
+    detailOrder.Mujer.forEach((detail) => {
+      detail.price = product.wholeSalePrice / 100;
+    });
+
+    detailOrder.Niño.forEach((detail) => {
+      detail.price = product.wholeSalePrice / 100;
     });
   };
 
@@ -152,33 +167,60 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
       ) : (
         <Stack mb={20}>
           <Flex justify="flex-start" align="flex-start" mb={20}>
-            <Image
-              src={selectedProduct.image}
-              h={200}
-              w="auto"
-              mr={10}
-              style={{ borderRight: "1px solid grey" }}
-            />
+            <Image src={selectedProduct.image} h={200} w="auto" mr={10} />
 
-            <Stack align="flex-start" justify="center">
-              <Button
-                size="sm"
-                type="submit"
-                variant="light"
-                leftSection={<IoArrowBackCircle />}
-                onClick={handleChangeProduct}
-              >
-                Regresar a lista
-              </Button>
+            <Stack
+              align="flex-start"
+              justify="center"
+              pl={20}
+              style={{ borderLeft: "1px solid grey" }}
+            >
+              <Flex gap={10}>
+                <Button
+                  size="sm"
+                  type="submit"
+                  variant="light"
+                  leftSection={<IoArrowBackCircle />}
+                  onClick={handleChangeProduct}
+                >
+                  Regresar a lista
+                </Button>
+                <Button
+                  size="sm"
+                  type="submit"
+                  variant="light"
+                  leftSection={<PiCoinsBold />}
+                  onClick={() => setDefaultPrices(selectedProduct)}
+                >
+                  Aplicar precio al detalle
+                </Button>
+                <Button
+                  size="sm"
+                  type="submit"
+                  variant="light"
+                  leftSection={<FaMoneyBillTrendUp />}
+                  onClick={() => setWhoSalePrices(selectedProduct)}
+                >
+                  Aplicar precio por mayor
+                </Button>
+              </Flex>
               <Text size="lg">
-                <strong> SKU:</strong>
+                <strong>SKU:</strong>
                 {selectedProduct.SKU}
               </Text>
               <Text size="lg">
-                <strong> Producto:</strong> {selectedProduct.name}
+                <strong>Precio al Detalle:</strong>$
+                {selectedProduct.retailPrice / 100}
               </Text>
               <Text size="lg">
-                <strong> Descripción:</strong> {selectedProduct.description}
+                <strong>Precio por Mayor:</strong>$
+                {selectedProduct.wholeSalePrice / 100}
+              </Text>
+              <Text size="lg">
+                <strong>Producto:</strong> {selectedProduct.name}
+              </Text>
+              <Text size="lg">
+                <strong>Descripción:</strong> {selectedProduct.description}
               </Text>
             </Stack>
           </Flex>
