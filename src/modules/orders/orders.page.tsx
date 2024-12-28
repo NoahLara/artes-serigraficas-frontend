@@ -25,22 +25,24 @@ import { DetailOrder } from "./components/detail-order/detail-order.component";
 import { Product } from "../shared/core/interfaces";
 import { ProductByPerson } from "../shared/core/interfaces/product-by-person.interface";
 import { DetailOrderData } from "./components/detail-order/detail-order.data";
-import OrderPDF from "../shared/components/pdf-formats/order.pdf";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { OrderInterface } from "./orders.interface";
+import OrderPDF from "../shared/components/pdf-formats/order/order.pdf";
 
 export const OrdersPage = () => {
-  const form = useForm({
+  const form = useForm<OrderInterface>({
     initialValues: {
       neckType: "",
       sizeAndFit: "",
       color: "",
+      fabric: "",
       fabricThickness: 0,
       specialProperties: [],
       sleeveType: "",
       customizationTechniques: "",
       customizationLocations: [],
       createdBy: "",
-      deliveryDate: null, // Default to null
+      deliveryDate: "", // Default to null
       madeDate: new Date(), // Default to current date
       orderSource: "",
       customerName: "",
@@ -62,6 +64,10 @@ export const OrdersPage = () => {
       sizeAndFit: (value) =>
         value.trim().length === 0
           ? "El campo 'Proporcion' es obligatorio"
+          : null,
+      fabric: (value) =>
+        value.trim().length === 0
+          ? "El campo 'Tipo de Tela' es obligatorio"
           : null,
       fabricThickness: (value) =>
         value === 0 ? "El campo 'Gramage' es obligatorio" : null,
@@ -114,7 +120,7 @@ export const OrdersPage = () => {
 
   const handleSubmit = (values: typeof form.values) => {
     // Format `madeDate` correctly
-    const formattedValues = {
+    const formattedValues: OrderInterface = {
       ...values,
       madeDate: dayjs(values.madeDate, "dddd DD MMMM YYYY hh:mm A").format(
         "dddd DD MMMM YYYY hh:mm A"
@@ -134,11 +140,9 @@ export const OrdersPage = () => {
 
     const pdfDocument = selectedProduct && (
       <OrderPDF
-        customerName={values.customerName}
-        orderDate={formattedValues.madeDate}
+        orderInformation={formattedValues}
         detailOrder={detailOrder}
-        formattedValues={formattedValues}
-        selectedProduct={selectedProduct}
+        product={selectedProduct}
       />
     );
 
@@ -208,12 +212,18 @@ export const OrdersPage = () => {
                       <Radio value="Stretch" label="Stretch" />
                     </Group>
                   </Radio.Group>
-                  {/* Color */}
-                  <TextInput
-                    label="Color: "
-                    placeholder="Color de Camisas"
-                    {...form.getInputProps("color")}
-                  />
+                  {/* Tipo de Tela */}
+                  <Radio.Group
+                    label="Tipo de Tela:"
+                    withAsterisk
+                    {...form.getInputProps("fabric")}
+                  >
+                    <Group mt="xs">
+                      <Radio value="Algodón" label="Algodón" />
+                      <Radio value="P. Durazno" label="P. Durazno" />
+                      <Radio value="Poliester" label="Poliester" />
+                    </Group>
+                  </Radio.Group>
                   {/* Propiedades Especiales */}
                   <Checkbox.Group
                     defaultValue={["react"]}
@@ -277,6 +287,12 @@ export const OrdersPage = () => {
                       <Checkbox value="Manga" label="Manga" />
                     </Group>
                   </Checkbox.Group>
+                  {/* Color */}
+                  <TextInput
+                    label="Color: "
+                    placeholder="Color de Camisas"
+                    {...form.getInputProps("color")}
+                  />
                 </Stack>
               </Grid.Col>
             </Grid>
