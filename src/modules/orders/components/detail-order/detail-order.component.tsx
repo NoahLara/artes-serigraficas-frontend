@@ -205,22 +205,24 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                 </Button>
               </Flex>
               <Text size="lg">
-                <strong>SKU:</strong>
+                <strong>SKU: </strong>
                 {selectedProduct.SKU}
               </Text>
               <Text size="lg">
-                <strong>Precio al Detalle:</strong>$
+                <strong>Precio al Detalle: </strong>$
                 {selectedProduct.retailPrice / 100}
               </Text>
               <Text size="lg">
-                <strong>Precio por Mayor:</strong>$
+                <strong>Precio por Mayor: </strong>$
                 {selectedProduct.wholeSalePrice / 100}
               </Text>
               <Text size="lg">
-                <strong>Producto:</strong> {selectedProduct.name}
+                <strong>Producto: </strong>
+                {selectedProduct.name}
               </Text>
               <Text size="lg">
-                <strong>Descripción:</strong> {selectedProduct.description}
+                <strong>Descripción: </strong>
+                {selectedProduct.description}
               </Text>
             </Stack>
           </Flex>

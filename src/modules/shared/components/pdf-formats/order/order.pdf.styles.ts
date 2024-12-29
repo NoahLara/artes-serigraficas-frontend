@@ -2,18 +2,22 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 export const orderStyles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 50,
     fontSize: 12,
     fontFamily: "Helvetica",
   },
-
+  text: {
+    marginBottom: 4,
+  },
+  column: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
   text_bold: {
     fontWeight: 800,
-    fontSize: 14,
   },
 
   header: {
-    fontSize: 14,
     fontWeight: 800,
     marginBottom: 20,
     textAlign: "center",
@@ -30,21 +34,18 @@ export const orderStyles = StyleSheet.create({
 
   image_container: {
     flexGrow: 0,
-    width: 125,
-    height: 120,
   },
   product_image: {
-    width: 125,
-    height: 120,
+    width: "150px",
+    height: "125px",
   },
 
   info_container: {
     flexGrow: 1,
   },
-  text: {
-    marginBottom: 4,
-  },
+
   table: {
+    fontSize: "8px",
     display: "flex",
     width: "100%",
     borderStyle: "solid",

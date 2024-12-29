@@ -3,6 +3,18 @@ import { OrderPDFProps } from "./order.interfaces";
 import { orderStyles } from "./order.pdf.styles";
 import { ProductSize } from "../../../core/interfaces/product-size.interface";
 
+const Detail = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | string[];
+}) => (
+  <Text style={orderStyles.text}>
+    <Text style={orderStyles.text_bold}>{label}:</Text> {value}
+  </Text>
+);
+
 // Define PDF content
 export const OrderPDF: React.FC<OrderPDFProps> = ({
   orderInformation,
@@ -27,77 +39,48 @@ export const OrderPDF: React.FC<OrderPDFProps> = ({
 
         {/* Product Information*/}
         <View style={orderStyles.product_information}>
+          <View style={orderStyles.info_container}>
+            <Detail label="SKU" value={product?.SKU} />
+            <Detail label="Producto" value={product?.name} />
+            <Detail label="Cuello" value={orderInformation?.neckType} />
+            <Detail label="Proporción" value={orderInformation.sizeAndFit} />
+            <Detail label="Tela" value={orderInformation.fabric} />
+            <Detail label="Gramaje" value={orderInformation.fabricThickness} />
+            <Detail label="Manga" value={orderInformation.sleeveType} />
+            <Detail
+              label="Técnica"
+              value={orderInformation.customizationTechniques}
+            />
+            <Detail
+              label="Estampar"
+              value={orderInformation.customizationLocations.join(", ")}
+            />
+            <Detail label="Color" value={orderInformation.color} />
+            <Detail
+              label="Propiedades Especiales"
+              value={orderInformation.specialProperties.join(", ")}
+            />
+            <Detail label="Descripción" value={product?.description} />
+          </View>
           <View style={orderStyles.image_container}>
             <Image
               src={product.image?.toString()}
               style={orderStyles.product_image}
             />
           </View>
-          <View style={orderStyles.info_container}>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>SKU:</Text> {product?.SKU}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Producto:</Text>{" "}
-              {product?.name}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Descripción:</Text>{" "}
-              {product?.description}
-            </Text>
-          </View>
         </View>
 
-        {/* Order Details */}
-        <View style={orderStyles.product_information}>
-          <View style={orderStyles.info_container}>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Cuello:</Text>{" "}
-              {orderInformation?.neckType}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Proporcion:</Text>{" "}
-              {orderInformation.sizeAndFit}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Tela:</Text>{" "}
-              {orderInformation.fabric}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Gramaje:</Text>{" "}
-              {orderInformation.fabricThickness}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Manga:</Text>{" "}
-              {orderInformation.sleeveType}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Técnica:</Text>{" "}
-              {orderInformation.customizationTechniques}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Estampar:</Text>{" "}
-              {orderInformation.customizationLocations.join(", ")}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Color:</Text>{" "}
-              {orderInformation.color}
-            </Text>
-            <Text style={orderStyles.text}>
-              <Text style={orderStyles.text_bold}>Propiedades Especiales:</Text>{" "}
-              {orderInformation.specialProperties.join(", ")}
-            </Text>
-          </View>
-        </View>
-
-        {/* 
-        <View style={orderStyles.section}>
-          <Text style={orderStyles.sectionTitle}>Detalles del Pedido</Text>
+        <View>
+          <Text>Detalles del Pedido</Text>
           <View style={orderStyles.table}>
             <View style={[orderStyles.tableRow, orderStyles.tableHeader]}>
               <Text style={orderStyles.tableCell}>Categoría</Text>
               <Text style={orderStyles.tableCell}>Tamaño</Text>
               <Text style={orderStyles.tableCell}>Cantidad</Text>
+              <Text style={orderStyles.tableCell}>Corte</Text>
+              <Text style={orderStyles.tableCell}>Confeccion</Text>
+              <Text style={orderStyles.tableCell}>Estampado</Text>
+              <Text style={orderStyles.tableCell}>Empacado</Text>
             </View>
 
             {Object.entries(filteredDetailOrder).map(([category, sizes]) =>
@@ -106,12 +89,16 @@ export const OrderPDF: React.FC<OrderPDFProps> = ({
                   <Text style={orderStyles.tableCell}>{category}</Text>
                   <Text style={orderStyles.tableCell}>{size.name}</Text>
                   <Text style={orderStyles.tableCell}>{size.quantity}</Text>
+                  <Text style={orderStyles.tableCell}></Text>
+                  <Text style={orderStyles.tableCell}></Text>
+                  <Text style={orderStyles.tableCell}></Text>
+                  <Text style={orderStyles.tableCell}></Text>
                 </View>
               ))
             )}
           </View>
         </View>
-
+        {/* 
         <View style={orderStyles.section}>
           <Text style={orderStyles.sectionTitle}>Información del Pago</Text>
           <Text style={orderStyles.text}>
