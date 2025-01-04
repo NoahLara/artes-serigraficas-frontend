@@ -22,6 +22,7 @@ interface CardProps {
   text_color: string;
   text_margin_top: string;
   product: Product;
+  onSuccess: () => void;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -35,6 +36,7 @@ export const Card: React.FC<CardProps> = ({
   // text_color,
   // text_margin_top,
   product,
+  onSuccess,
 }) => {
   const [
     openedProductDetail,
@@ -65,7 +67,9 @@ export const Card: React.FC<CardProps> = ({
         </CardComponent.Section>
         {/* PRODUCT SKU */}
         <Flex justify="center">
-          <Text fw={text_weight} size="xl">{product.SKU}</Text>
+          <Text fw={text_weight} size="xl">
+            {product.SKU}
+          </Text>
         </Flex>
         {/* PRODUCT NAME */}
         <Text>{product.name}</Text>
@@ -112,6 +116,7 @@ export const Card: React.FC<CardProps> = ({
       <ProductDetail
         opened={openedProductDetail}
         product={product}
+        onSuccess={onSuccess}
         onClose={() => closeProductDetail()}
       />
     </>

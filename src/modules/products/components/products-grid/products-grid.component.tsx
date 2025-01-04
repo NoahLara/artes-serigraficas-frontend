@@ -5,6 +5,7 @@ import { Card } from "../card/card.component";
 
 export const ProductsGrid: React.FC<ProductsGridProps> = ({
   filteredProducts,
+  onSuccess,
 }) => {
   return (
     <Grid gutter="md">
@@ -22,6 +23,7 @@ export const ProductsGrid: React.FC<ProductsGridProps> = ({
               text_color="dimmed"
               text_margin_top="md"
               product={product}
+              onSuccess={onSuccess}
             />
           </Grid.Col>
         ))}

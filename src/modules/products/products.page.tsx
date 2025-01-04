@@ -96,6 +96,10 @@ export const ProductsPage: React.FC = () => {
             filteredProducts={filteredProducts.filter((product) =>
               product.name.toLowerCase().includes(searchTerm.toLowerCase())
             )}
+            onSuccess={() => {
+              refetchProducts();
+              refetchCategories();
+            }}
           ></ProductsGrid>
         ) : (
           <NotFound

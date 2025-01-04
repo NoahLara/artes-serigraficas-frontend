@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   TextInput,
   NumberInput,
   Button,
-  Select,
   Alert,
   Flex,
   Text,
@@ -12,10 +11,13 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
+import { notifications } from "@mantine/notifications";
 import { Category, Product } from "../../../../../shared/core/interfaces";
 import { UPDATE_PRODUCT } from "../../../../../../graphql/queries/updateProduct.query";
 import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
 import { PreviewImageUpdateProduct } from "../preview-image-update-product/preview-image-update-product.component";
+import { FaCheckCircle } from "react-icons/fa";
+import { VscError } from "react-icons/vsc";
 
 interface UpdateProductFormProps {
   product: Product;
@@ -28,17 +30,12 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-  const [
-    updateProduct,
-    { loading: loadingUpdateProduct, error: errorUpdateProduct },
-  ] = useMutation(UPDATE_PRODUCT);
+  const [updateProduct, { loading: loadingUpdateProduct }] =
+    useMutation(UPDATE_PRODUCT);
 
-  const {
-    loading: loadingCategories,
-    error: errorCategories,
-    data: categoriesData,
-  } = useQuery<{ categories: Category[] }>(GET_CATEGORIES);
-  const [success, setSuccess] = useState(false);
+  const { loading: loadingCategories, error: errorCategories } = useQuery<{
+    categories: Category[];
+  }>(GET_CATEGORIES);
 
   const form = useForm({
     initialValues: {
@@ -66,7 +63,6 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    setSuccess(false);
     try {
       const imageBase64 = values.image;
       const currentRetailPrice = values.retailPrice;
@@ -83,15 +79,33 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         },
       });
 
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        onSuccess();
-        onClose();
-      }, 2000);
+      onCreateSuccess();
+      onSuccess();
+      onClose();
     } catch (err) {
+      onCreateError();
       console.error("Error updating product:", err);
     }
+  };
+
+  const onCreateSuccess = () => {
+    notifications.show({
+      color: "teal",
+      icon: <FaCheckCircle />,
+      title: "Modificar Producto",
+      message: `El producto ${form.values.SKU} has sido modificado exitosamente`,
+      position: "top-right",
+      time: 5000,
+    });
+  };
+  const onCreateError = () => {
+    notifications.show({
+      color: "red",
+      icon: <VscError />,
+      title: "Modificar Producto",
+      message: `El producto ${form.values.SKU} no se pudo modificar, intentelo de nuevo`,
+      position: "top-right",
+    });
   };
 
   return (
@@ -151,38 +165,13 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
             Categorias no pudieron cargarse. Porfavor refresque la pagina.
           </Alert>
         ) : (
-          <Select
-            w="100%"
-            label="Categoria"
-            placeholder="Seleccione una categoria"
-            withAsterisk
-            data={
-              categoriesData && categoriesData.categories
-                ? categoriesData.categories.map((category) => ({
-                    value: category.categoryId,
-                    label: category.name,
-                  }))
-                : []
-            }
-            {...form.getInputProps("categoryId")}
-          />
+          ""
         )}
       </Flex>
 
       <Button type="submit" fullWidth mt="lg" loading={loadingUpdateProduct}>
         Modificar Producto
       </Button>
-
-      {success && (
-        <Alert title="Success" color="green" mt="lg">
-          Product modificado exitosamente
-        </Alert>
-      )}
-      {errorUpdateProduct && (
-        <Alert title="Error" color="red" mt="lg">
-          {errorUpdateProduct.message}
-        </Alert>
-      )}
     </form>
   );
 };
