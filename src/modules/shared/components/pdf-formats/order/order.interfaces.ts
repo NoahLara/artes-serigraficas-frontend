@@ -1,4 +1,4 @@
-import { OrderInterface } from "../../../../orders/orders.interface";
+import { OrderInterface } from "../../../../orders/camisa/orders.interface";
 import { Product } from "../../../core/interfaces";
 import { ProductByPerson } from "../../../core/interfaces/product-by-person.interface";
 

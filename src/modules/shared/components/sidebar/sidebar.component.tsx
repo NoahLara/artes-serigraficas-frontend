@@ -39,12 +39,13 @@ export const Sidebar: React.FC = () => {
           leftSection={<MdAssignmentAdd />}
           childrenOffset={28}
         >
-          {/* <NavLink
+          <NavLink
             component={S.LinkItem}
-            to="/ordenes"
+            to="/pedido/Conjuntos"
             label="Conjuntos"
             leftSection={<GiClothes />}
-          /> */}
+          />
+
           {/* <NavLink
             component={S.LinkItem}
             to="/ordenes"
