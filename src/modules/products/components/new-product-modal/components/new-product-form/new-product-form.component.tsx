@@ -2,11 +2,8 @@ import {
   TextInput,
   NumberInput,
   Button,
-  Select,
   Alert,
-  Flex,
   Text,
-  Loader,
   Stack,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +15,8 @@ import { CREATE_PRODUCT } from "../../../../../../graphql/queries/createProduct.
 import { PreviewImageNewProduct } from "../preview-image-new-product/preview-image-new-product.component";
 import { Category } from "../../../../../shared/core/interfaces";
 import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface ProductFormProps {
   onSuccess: () => void;
@@ -28,15 +27,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   onSuccess,
   onClose,
 }) => {
-  const [
-    createProduct,
-    { loading: loadingCreateProduct, error: errorCreateProduct },
-  ] = useMutation(CREATE_PRODUCT);
-  const {
-    loading: loadingCategories,
-    error: errorCategories,
-    data: categoriesData,
-  } = useQuery<{ categories: Category[] }>(GET_CATEGORIES);
+  const { category: categoryName } = useParams<{ category: string }>();
+
+  const [categoryIdToSave, setCategoryIdToSave] = useState<string>("");
+
+  const [createProduct, { error: errorCreateProduct }] =
+    useMutation(CREATE_PRODUCT);
+
+  const { data: categoriesData } = useQuery<{
+    categories: Category[];
+  }>(GET_CATEGORIES);
 
   const form = useForm({
     initialValues: {
@@ -64,10 +64,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         return null;
       },
       image: (value) => (!value ? "Imagen del producto es obligatoria" : null),
-      categoryId: (value) =>
-        value.trim().length === 0 ? "La categoria es obligatoria" : null,
+      // categoryId: (value) =>
+      //   value.trim().length === 0 ? "La categoria es obligatoria" : null,
     },
   });
+
+  useEffect(() => {
+    if (categoryName && categoriesData) {
+      const categoryId = categoriesData.categories.find(
+        (cat) => cat.name.toLowerCase() === categoryName?.toLowerCase()
+      )?.categoryId;
+
+      setCategoryIdToSave(categoryId || "");
+      form.setFieldValue("categoryId", categoryIdToSave || "");
+    }
+  }, [categoriesData, categoryName, categoryIdToSave, form]);
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
@@ -168,39 +179,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         {...form.getInputProps("description")}
       />
 
-      <Flex>
-        {loadingCategories ? (
-          <Loader color="blue" />
-        ) : errorCategories ? (
-          <Alert title="Error" color="red" mt="lg">
-            No se pudieron cargar las categorías. Por favor, recargue la página.
-          </Alert>
-        ) : (
-          <Select
-            w="100%"
-            label="Categoría"
-            placeholder="Selecciona una categoría"
-            withAsterisk
-            data={
-              categoriesData && categoriesData.categories
-                ? categoriesData.categories.map((category) => ({
-                    value: category.categoryId,
-                    label: category.name,
-                  }))
-                : []
-            }
-            {...form.getInputProps("categoryId")}
-          />
-        )}
-      </Flex>
-
-      <Button
-        type="submit"
-        fullWidth
-        mt="lg"
-        loading={loadingCreateProduct}
-        disabled={loadingCreateProduct}
-      >
+      <Button type="submit" fullWidth mt="lg">
         Crear Producto
       </Button>
     </form>

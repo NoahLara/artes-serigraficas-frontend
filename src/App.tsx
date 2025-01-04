@@ -3,7 +3,7 @@ import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import { ApolloAppProvider } from "./graphql/ApolloProvider.jsx";
 import { MantineProvider } from "@mantine/core";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"; // Import Navigate
+import { BrowserRouter, Route, Routes } from "react-router-dom"; // Import Navigate
 import { MainLayout } from "./modules/layouts/main-layout";
 import { ProductsPage } from "./modules/products/products.page";
 import { Notifications } from "@mantine/notifications";
@@ -25,7 +25,8 @@ export default function App() {
               <Route path="/" element={<MainLayout />}>
                 {/* <Route index element={<Navigate to="productos" replace />} />
               <Route path="*" element={<Navigate to="productos" replace />} /> */}
-                <Route path="productos" element={<ProductsPage />} />
+                <Route path="productos/:category" element={<ProductsPage />} />
+
                 <Route path="ordenes" element={<OrdersPage />} />
               </Route>
             </Routes>
