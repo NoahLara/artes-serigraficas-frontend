@@ -104,8 +104,8 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       >
         <Combobox.Target>
           <TextInput
-            label="Search Product"
-            placeholder="Search by SKU or Name"
+            label="Buscar Producto"
+            placeholder="Buscar por SKU o Nombre"
             value={searchTerm}
             onChange={(event) => {
               setSearchTerm(event.currentTarget.value);
@@ -114,7 +114,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
             onFocus={() => combobox.openDropdown()}
             rightSection={
               searchTerm !== "" && (
-                <CloseButton size="sm" onMouseDown={(event) => event.preventDefault()} onClick={() => setSearchTerm("")} aria-label="Clear value" />
+                <CloseButton size="sm" onMouseDown={(event) => event.preventDefault()} onClick={() => setSearchTerm("")} aria-label="Limpiar valor" />
               )
             }
           />
@@ -155,39 +155,39 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
           {productDetails.map((detail, index) => (
             <Flex key={index} gap="md" mt="md">
               <Select
-                label="Size"
+                label="Tamaño"
                 data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
                 value={detail.name as string}
                 onChange={(value) => handleSizeChange(index, "name", value as string)}
               />
-              <NumberInput label="Quantity" min={1} value={detail.quantity} onChange={(value) => handleSizeChange(index, "quantity", value)} />
+              <NumberInput label="Cantidad" min={1} value={detail.quantity} onChange={(value) => handleSizeChange(index, "quantity", value)} />
 
               {/* Select Dropdown for Retail or Wholesale */}
               <Select
-                label="Price"
-                value={detail.price === selectedProduct.retailPrice ? "Retail" : "Wholesale"}
+                label="Precio"
+                value={detail.price === selectedProduct.retailPrice ? "Venta al por menor" : "Venta al por mayor"}
                 onChange={(value) => {
-                  const selectedPrice = value === "Retail" ? selectedProduct.retailPrice : selectedProduct.wholeSalePrice;
+                  const selectedPrice = value === "Venta al por menor" ? selectedProduct.retailPrice : selectedProduct.wholeSalePrice;
                   handleSizeChange(index, "price", selectedPrice); // Ensure price is set as number
                 }}
-                data={["Retail", "Wholesale"]}
+                data={["Venta al por menor", "Venta al por mayor"]}
               />
 
               {/* Display price */}
-              <NumberInput label="Price" min={0} value={detail.price || 0} disabled rightSection={<span>${(detail.price || 0).toFixed(2)}</span>} />
+              <NumberInput label="Precio" min={0} value={detail.price || 0} disabled rightSection={<span>${(detail.price || 0).toFixed(2)}</span>} />
 
               <Button color="red" onClick={() => removeDetail(details.length - 1, index)}>
-                Remove
+                Eliminar
               </Button>
             </Flex>
           ))}
 
           <Button mt="sm" onClick={addSizeDetail}>
-            Add New Size
+            Agregar Nuevo Tamaño
           </Button>
 
           <Button mt="md" onClick={addDetail} disabled={!selectedProduct || productDetails.length === 0}>
-            Add Product
+            Agregar Producto
           </Button>
         </div>
       )}
@@ -195,13 +195,13 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       <Table mt="md" highlightOnHover>
         <thead>
           <tr>
-            <th>Image</th>
-            <th>Name</th>
+            <th>Imagen</th>
+            <th>Nombre</th>
             <th>SKU</th>
-            <th>Size</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Actions</th>
+            <th>Tamaño</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -218,7 +218,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 <td>${sizeDetail.price.toFixed(2)}</td>
                 <td>
                   <Button color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
-                    Delete
+                    Eliminar
                   </Button>
                 </td>
               </tr>
