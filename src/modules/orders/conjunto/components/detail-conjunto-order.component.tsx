@@ -15,7 +15,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [details, setDetails] = useState<DetailConjuntoOrderInterface[]>([]);
-  const [productDetail, setProductDetail] = useState<ProductDetail>({ name: "S", quantity: 0, price: 0 });
+  const [productDetails, setProductDetails] = useState<ProductDetail[]>([]);
 
   const { data: productsData, loading: loadingProducts } = useQuery<{ products: Product[] }>(GET_PRODUCTS);
   const { data: categoriesData, loading: loadingCategories } = useQuery<{ categories: Category[] }>(GET_CATEGORIES);
@@ -36,12 +36,39 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
     if (product) setSelectedProduct(product);
   };
 
-  const addDetail = () => {
+  const addSizeDetail = () => {
     if (!selectedProduct) return;
+
+    // Default the price to 0 or retail price based on initial selection
+    const initialPrice = selectedProduct.retailPrice; // Default to retail price
+
+    setProductDetails([
+      ...productDetails,
+      { name: "S", quantity: 0, price: initialPrice }, // Set price initially as retail price
+    ]);
+  };
+
+  const handleSizeChange = (index: number, field: keyof ProductDetail, value: string | number) => {
+    const updatedDetails = productDetails.map((detail, i) => {
+      if (i === index) {
+        if (field === "price") {
+          // Convert value to number if it's not already
+          const priceValue = typeof value === "number" ? value : parseFloat(value.toString());
+          return { ...detail, price: priceValue };
+        }
+        return { ...detail, [field]: value };
+      }
+      return detail;
+    });
+    setProductDetails(updatedDetails);
+  };
+
+  const addDetail = () => {
+    if (!selectedProduct || productDetails.length === 0) return;
 
     const newDetail: DetailConjuntoOrderInterface = {
       product: selectedProduct,
-      detail: [productDetail],
+      detail: productDetails,
     };
 
     setDetails((prevDetails) => [...prevDetails, newDetail]);
@@ -49,11 +76,17 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
     setSelectedProduct(null);
     setSearchTerm("");
-    setProductDetail({ name: "S", quantity: 0, price: 0 });
+    setProductDetails([]);
   };
 
-  const removeDetail = (index: number) => {
-    const updatedDetails = details.filter((_, i) => i !== index);
+  const removeDetail = (productIndex: number, sizeIndex: number) => {
+    const updatedDetails = [...details];
+    updatedDetails[productIndex].detail.splice(sizeIndex, 1);
+
+    if (updatedDetails[productIndex].detail.length === 0) {
+      updatedDetails.splice(productIndex, 1);
+    }
+
     setDetails(updatedDetails);
     onDetailChange(updatedDetails);
   };
@@ -111,45 +144,53 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       </Combobox>
 
       {selectedProduct && (
-        <Flex gap="md" mt="md">
-          <Image src={selectedProduct.image as string} width={50} height={50} alt={selectedProduct.name} />
-          <div>
-            <p>SKU: {selectedProduct.SKU}</p>
-          </div>
-        </Flex>
-      )}
+        <div>
+          <Flex gap="md" mt="md">
+            <Image src={selectedProduct.image as string} width={50} height={50} alt={selectedProduct.name} />
+            <div>
+              <p>SKU: {selectedProduct.SKU}</p>
+            </div>
+          </Flex>
 
-      {selectedProduct && (
-        <Flex gap="md" mt="md">
-          <Select
-            label="Size"
-            data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
-            value={productDetail.name as string}
-            onChange={(value) => setProductDetail({ ...productDetail, name: value as ProductDetail["name"] })}
-          />
-          <NumberInput
-            label="Quantity"
-            min={1}
-            value={productDetail.quantity}
-            onChange={(value) => setProductDetail({ ...productDetail, quantity: (value as number) || 0 })}
-          />
-          <Select
-            label="Price"
-            data={[
-              { value: selectedProduct.retailPrice.toString(), label: `Retail: $${selectedProduct.retailPrice/100}` },
-              { value: selectedProduct.wholeSalePrice.toString(), label: `Wholesale: $${selectedProduct.wholeSalePrice/100}` },
-            ].filter(
-              (option, index, self) => index === self.findIndex((o) => o.value === option.value) // Ensure unique value
-            )}
-            value={productDetail.price.toString()}
-            onChange={(value) => setProductDetail({ ...productDetail, price: parseFloat(value || "0") })}
-          />
-        </Flex>
-      )}
+          {productDetails.map((detail, index) => (
+            <Flex key={index} gap="md" mt="md">
+              <Select
+                label="Size"
+                data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
+                value={detail.name as string}
+                onChange={(value) => handleSizeChange(index, "name", value as string)}
+              />
+              <NumberInput label="Quantity" min={1} value={detail.quantity} onChange={(value) => handleSizeChange(index, "quantity", value)} />
 
-      <Button mt="md" onClick={addDetail} disabled={!selectedProduct}>
-        Add Product
-      </Button>
+              {/* Select Dropdown for Retail or Wholesale */}
+              <Select
+                label="Price"
+                value={detail.price === selectedProduct.retailPrice ? "Retail" : "Wholesale"}
+                onChange={(value) => {
+                  const selectedPrice = value === "Retail" ? selectedProduct.retailPrice : selectedProduct.wholeSalePrice;
+                  handleSizeChange(index, "price", selectedPrice); // Ensure price is set as number
+                }}
+                data={["Retail", "Wholesale"]}
+              />
+
+              {/* Display price */}
+              <NumberInput label="Price" min={0} value={detail.price || 0} disabled rightSection={<span>${(detail.price || 0).toFixed(2)}</span>} />
+
+              <Button color="red" onClick={() => removeDetail(details.length - 1, index)}>
+                Remove
+              </Button>
+            </Flex>
+          ))}
+
+          <Button mt="sm" onClick={addSizeDetail}>
+            Add New Size
+          </Button>
+
+          <Button mt="md" onClick={addDetail} disabled={!selectedProduct || productDetails.length === 0}>
+            Add Product
+          </Button>
+        </div>
+      )}
 
       <Table mt="md" highlightOnHover>
         <thead>
@@ -164,23 +205,25 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
           </tr>
         </thead>
         <tbody>
-          {details.map((detail, index) => (
-            <tr key={index}>
-              <td>
-                <Image src={detail.product.image as string} width={50} height={50} alt={detail.product.name} />
-              </td>
-              <td>{detail.product.name}</td>
-              <td>{detail.product.SKU}</td>
-              <td>{detail.detail[0].name}</td>
-              <td>{detail.detail[0].quantity}</td>
-              <td>${detail.detail[0].price}</td>
-              <td>
-                <Button color="red" onClick={() => removeDetail(index)}>
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {details.map((detail, productIndex) =>
+            detail.detail.map((sizeDetail, sizeIndex) => (
+              <tr key={`${productIndex}-${sizeIndex}`}>
+                <td>
+                  <Image src={detail.product.image as string} width={50} height={50} alt={detail.product.name} />
+                </td>
+                <td>{detail.product.name}</td>
+                <td>{detail.product.SKU}</td>
+                <td>{sizeDetail.name}</td>
+                <td>{sizeDetail.quantity}</td>
+                <td>${sizeDetail.price.toFixed(2)}</td>
+                <td>
+                  <Button color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </Table>
     </div>
