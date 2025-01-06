@@ -1,6 +1,4 @@
-import { Product } from "../../../shared/core/interfaces";
-import { ProductByPerson } from "../../../shared/core/interfaces/product-by-person.interface";
-
+import { Product, ProductByPerson } from "../../../../shared/core/interfaces";
 export interface DetailOrderProps {
   detailOrder: ProductByPerson;
   setDetailOrder: React.Dispatch<React.SetStateAction<ProductByPerson>>;

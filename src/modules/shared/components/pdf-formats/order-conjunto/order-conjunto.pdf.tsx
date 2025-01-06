@@ -1,35 +1,26 @@
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import { OrderPDFProps } from "./order.interfaces";
-import { orderStyles } from "./order.pdf.styles";
+import { OrderConjuntoPDFProps } from "./order-conjunto.interfaces";
+import { orderStyles } from "./order-conjunto.pdf.styles";
 import { ProductSize } from "../../../core/interfaces/product-size.interface";
 
-const Detail = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number | string[];
-}) => (
+const Detail = ({ label, value }: { label: string; value: string | number | string[] }) => (
   <Text style={orderStyles.text}>
     <Text style={orderStyles.text_bold}>{label}:</Text> {value}
   </Text>
 );
 
 // Define PDF content
-export const OrderPDF: React.FC<OrderPDFProps> = ({
-  orderInformation,
-  detailOrder,
-  product,
-}) => {
+export const OrderPDF: React.FC<OrderConjuntoPDFProps> = ({ orderInformation, detailOrder, product }) => {
   // Filter products with quantity > 0
-  const filterProductsByQuantity = (sizes: ProductSize[]) =>
-    sizes.filter((size) => size.quantity > 0);
+  const filterProductsByQuantity = (sizes: ProductSize[]) => sizes.filter((size) => size.quantity > 0);
 
   const filteredDetailOrder = {
     Hombre: filterProductsByQuantity(detailOrder.Hombre),
     Mujer: filterProductsByQuantity(detailOrder.Mujer),
     Niño: filterProductsByQuantity(detailOrder.Niño),
   };
+
+  console.log(orderInformation)
 
   return (
     <Document>
@@ -42,31 +33,19 @@ export const OrderPDF: React.FC<OrderPDFProps> = ({
           <View style={orderStyles.info_container}>
             <Detail label="SKU" value={product?.SKU} />
             <Detail label="Producto" value={product?.name} />
-            <Detail label="Cuello" value={orderInformation?.neckType} />
+            {/* <Detail label="Cuello" value={orderInformation?.neckType} />
             <Detail label="Proporción" value={orderInformation.sizeAndFit} />
             <Detail label="Tela" value={orderInformation.fabric} />
             <Detail label="Gramaje" value={orderInformation.fabricThickness} />
             <Detail label="Manga" value={orderInformation.sleeveType} />
-            <Detail
-              label="Técnica"
-              value={orderInformation.customizationTechniques}
-            />
-            <Detail
-              label="Estampar"
-              value={orderInformation.customizationLocations.join(", ")}
-            />
+            <Detail label="Técnica" value={orderInformation.customizationTechniques} />
+            <Detail label="Estampar" value={orderInformation.customizationLocations.join(", ")} />
             <Detail label="Color" value={orderInformation.color} />
-            <Detail
-              label="Propiedades Especiales"
-              value={orderInformation.specialProperties.join(", ")}
-            />
+            <Detail label="Propiedades Especiales" value={orderInformation.specialProperties.join(", ")} /> */}
             <Detail label="Descripción" value={product?.description} />
           </View>
           <View style={orderStyles.image_container}>
-            <Image
-              src={product.image?.toString()}
-              style={orderStyles.product_image}
-            />
+            <Image src={product.image?.toString()} style={orderStyles.product_image} />
           </View>
         </View>
 

@@ -1,41 +1,21 @@
 import React, { useState } from "react";
-import {
-  TextInput,
-  Card,
-  Image,
-  Text,
-  Box,
-  Flex,
-  NumberInput,
-  Stack,
-  Grid,
-  Divider,
-  Button,
-} from "@mantine/core";
+import { TextInput, Card, Image, Text, Box, Flex, NumberInput, Stack, Grid, Divider, Button } from "@mantine/core";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { PiCoinsBold } from "react-icons/pi";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { useQuery } from "@apollo/client";
-import { Product } from "../../../shared/core/interfaces";
-import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
-import { ProductSize } from "../../../shared/core/interfaces/product-size.interface";
 import { DetailOrderProps } from "./detail.order.interface";
+import { GET_PRODUCTS } from "../../../../../graphql/queries/getProducts.query";
+import { Product, ProductDetail } from "../../../../shared/core/interfaces";
 
-export const DetailOrder: React.FC<DetailOrderProps> = ({
-  detailOrder,
-  setDetailOrder,
-  selectedProduct,
-  setSelectedProduct,
-}) => {
+export const DetailOrder: React.FC<DetailOrderProps> = ({ detailOrder, setDetailOrder, selectedProduct, setSelectedProduct }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
   // Filter products based on SKU or name
   const filteredProducts = data?.products.filter(
-    (product: Product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.SKU.toLowerCase().includes(searchTerm.toLowerCase())
+    (product: Product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.SKU.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleProductClick = (product: Product) => {
@@ -90,7 +70,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
   };
 
   // Function to calculate totals for each person type
-  const calculateTotalByType = (type: ProductSize[]) => {
+  const calculateTotalByType = (type: ProductDetail[]) => {
     return type.reduce((total, detail) => {
       if (detail.quantity > 0) {
         return total + detail.quantity * detail.price;
@@ -113,12 +93,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
       {!selectedProduct ? (
         <>
           {/* Search Bar */}
-          <TextInput
-            placeholder="Buscar productos por nombre o SKU..."
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            mb="lg"
-          />
+          <TextInput placeholder="Buscar productos por nombre o SKU..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} mb="lg" />
 
           {/* Product Grid with Horizontal Scroll */}
           <Box
@@ -131,9 +106,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
             }}
           >
             {loading && <Text>Cargando productos...</Text>}
-            {error && (
-              <Text color="red">Hubo un error al cargar los productos.</Text>
-            )}
+            {error && <Text color="red">Hubo un error al cargar los productos.</Text>}
             {filteredProducts?.length > 0 ? (
               filteredProducts.map((product: Product) => (
                 <Card
@@ -146,11 +119,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                   onClick={() => handleProductClick(product)}
                 >
                   <Card.Section>
-                    <Image
-                      src={product.image}
-                      alt="product image"
-                      style={{ objectFit: "contain" }}
-                    />
+                    <Image src={product.image} alt="product image" style={{ objectFit: "contain" }} />
                   </Card.Section>
                   <Flex justify="center">
                     <Text fw={800} size="xl">
@@ -169,38 +138,15 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
           <Flex justify="flex-start" align="flex-start" mb={20}>
             <Image src={selectedProduct.image} h={200} w="auto" mr={10} />
 
-            <Stack
-              align="flex-start"
-              justify="center"
-              pl={20}
-              style={{ borderLeft: "1px solid grey" }}
-            >
+            <Stack align="flex-start" justify="center" pl={20} style={{ borderLeft: "1px solid grey" }}>
               <Flex gap={10}>
-                <Button
-                  size="sm"
-                  type="submit"
-                  variant="light"
-                  leftSection={<IoArrowBackCircle />}
-                  onClick={handleChangeProduct}
-                >
+                <Button size="sm" type="submit" variant="light" leftSection={<IoArrowBackCircle />} onClick={handleChangeProduct}>
                   Regresar a lista
                 </Button>
-                <Button
-                  size="sm"
-                  type="submit"
-                  variant="light"
-                  leftSection={<PiCoinsBold />}
-                  onClick={() => setDefaultPrices(selectedProduct)}
-                >
+                <Button size="sm" type="submit" variant="light" leftSection={<PiCoinsBold />} onClick={() => setDefaultPrices(selectedProduct)}>
                   Aplicar precio al detalle
                 </Button>
-                <Button
-                  size="sm"
-                  type="submit"
-                  variant="light"
-                  leftSection={<FaMoneyBillTrendUp />}
-                  onClick={() => setWhoSalePrices(selectedProduct)}
-                >
+                <Button size="sm" type="submit" variant="light" leftSection={<FaMoneyBillTrendUp />} onClick={() => setWhoSalePrices(selectedProduct)}>
                   Aplicar precio por mayor
                 </Button>
               </Flex>
@@ -209,12 +155,10 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                 {selectedProduct.SKU}
               </Text>
               <Text size="lg">
-                <strong>Precio al Detalle: </strong>$
-                {selectedProduct.retailPrice / 100}
+                <strong>Precio al Detalle: </strong>${selectedProduct.retailPrice / 100}
               </Text>
               <Text size="lg">
-                <strong>Precio por Mayor: </strong>$
-                {selectedProduct.wholeSalePrice / 100}
+                <strong>Precio por Mayor: </strong>${selectedProduct.wholeSalePrice / 100}
               </Text>
               <Text size="lg">
                 <strong>Producto: </strong>
@@ -239,20 +183,14 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
           <Stack gap="lg" mt="sm">
             {detailOrder.Hombre.map((detail, index) => (
               <Flex gap={20} key={`hombre-${index}`}>
-                <TextInput
-                  size="xs"
-                  label="Talla"
-                  value={String(detail.name)}
-                  disabled
-                />
+                <TextInput size="xs" label="Talla" value={String(detail.name)} disabled />
                 <NumberInput
                   size="xs"
                   label="Cantidad"
                   value={detail.quantity}
                   onChange={(value) => {
                     const updatedHombre = [...detailOrder.Hombre];
-                    updatedHombre[index].quantity =
-                      parseInt(String(value ?? "0")) || 0;
+                    updatedHombre[index].quantity = parseInt(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Hombre: updatedHombre,
@@ -267,8 +205,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                   decimalScale={2}
                   onChange={(value) => {
                     const updatedHombre = [...detailOrder.Hombre];
-                    updatedHombre[index].price =
-                      parseFloat(String(value ?? "0")) || 0;
+                    updatedHombre[index].price = parseFloat(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Hombre: updatedHombre,
@@ -292,20 +229,14 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
           <Stack gap="lg" mt="sm">
             {detailOrder.Mujer.map((detail, index) => (
               <Flex gap={20} key={`mujer-${index}`}>
-                <TextInput
-                  size="xs"
-                  label="Talla"
-                  value={String(detail.name)}
-                  disabled
-                />
+                <TextInput size="xs" label="Talla" value={String(detail.name)} disabled />
                 <NumberInput
                   size="xs"
                   label="Cantidad"
                   value={detail.quantity}
                   onChange={(value) => {
-                    const updatedMujer: ProductSize[] = [...detailOrder.Mujer];
-                    updatedMujer[index].quantity =
-                      parseInt(String(value ?? "0")) || 0;
+                    const updatedMujer: ProductDetail[] = [...detailOrder.Mujer];
+                    updatedMujer[index].quantity = parseInt(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Mujer: updatedMujer,
@@ -320,8 +251,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                   decimalScale={2}
                   onChange={(value) => {
                     const updatedMujer = [...detailOrder.Mujer];
-                    updatedMujer[index].price =
-                      parseFloat(String(value ?? "0")) || 0;
+                    updatedMujer[index].price = parseFloat(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Mujer: updatedMujer,
@@ -345,20 +275,14 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
           <Stack gap="lg" mt="sm">
             {detailOrder.Niño.map((detail, index) => (
               <Flex gap={20} key={`niño-${index}`}>
-                <TextInput
-                  size="xs"
-                  label="Talla"
-                  value={String(detail.name)}
-                  disabled
-                />
+                <TextInput size="xs" label="Talla" value={String(detail.name)} disabled />
                 <NumberInput
                   size="xs"
                   label="Cantidad"
                   value={detail.quantity}
                   onChange={(value) => {
                     const updatedNiño = [...detailOrder.Niño];
-                    updatedNiño[index].quantity =
-                      parseInt(String(value ?? "0")) || 0;
+                    updatedNiño[index].quantity = parseInt(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Niño: updatedNiño,
@@ -373,8 +297,7 @@ export const DetailOrder: React.FC<DetailOrderProps> = ({
                   decimalScale={2}
                   onChange={(value) => {
                     const updatedNiño = [...detailOrder.Niño];
-                    updatedNiño[index].price =
-                      parseFloat(String(value ?? "0")) || 0;
+                    updatedNiño[index].price = parseFloat(String(value ?? "0")) || 0;
                     setDetailOrder((prev) => ({
                       ...prev,
                       Niño: updatedNiño,

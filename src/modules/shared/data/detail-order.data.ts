@@ -1,4 +1,4 @@
-import { ProductByPerson } from "../../../shared/core/interfaces/product-by-person.interface";
+import { ProductByPerson } from "../core/interfaces/product-by-person.interface";
 
 export const DetailOrderData: ProductByPerson = {
   Hombre: [

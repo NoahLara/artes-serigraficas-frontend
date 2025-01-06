@@ -24,7 +24,7 @@ import { FaTruckFast } from "react-icons/fa6";
 import { DetailOrder } from "./components/detail-order/detail-order.component";
 import { Product } from "../../shared/core/interfaces";
 import { ProductByPerson } from "../../shared/core/interfaces/product-by-person.interface";
-import { DetailOrderData } from "./components/detail-order/detail-order.data";
+import { DetailOrderData } from "../../shared/data";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { OrderInterface } from "./orders.interface";
 import OrderPDF from "../shared/components/pdf-formats/order/order.pdf";
