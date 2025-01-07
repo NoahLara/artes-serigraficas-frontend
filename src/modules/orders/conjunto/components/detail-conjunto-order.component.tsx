@@ -147,7 +147,6 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
           </Combobox.Options>
         </Combobox.Dropdown>
       </Combobox>
-
       {selectedProduct && (
         <div>
           <Flex gap="md" mt="md">
@@ -203,7 +202,6 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
           </Flex>
         </div>
       )}
-
       <Table mt="md" highlightOnHover>
         <thead>
           <tr>

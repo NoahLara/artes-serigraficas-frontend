@@ -1,6 +1,6 @@
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import { OrderConjuntoPDFProps } from "./order-conjunto.interfaces";
-import { orderStyles } from "./order-conjunto.pdf.styles";
+import { OrderConjuntoPDFProps } from "./order-camisas.interfaces";
+import { orderStyles } from "./order-camisas.pdf.styles";
 import { ProductDetail } from "../../../core/interfaces/product-size.interface";
 
 const Detail = ({ label, value }: { label: string; value: string | number | string[] }) => (
