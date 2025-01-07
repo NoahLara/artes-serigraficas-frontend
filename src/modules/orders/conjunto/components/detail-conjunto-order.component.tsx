@@ -5,6 +5,8 @@ import { Category, Product, ProductDetail } from "../../../shared/core/interface
 import { DetailConjuntoOrderInterface } from "./detail-conjunto-order.interface";
 import { GET_PRODUCTS } from "../../../../graphql/queries/getProducts.query";
 import { GET_CATEGORIES } from "../../../../graphql/queries/getCategories.query";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { TbRulerMeasure } from "react-icons/tb";
 
 interface OrderConjuntoProps {
   onDetailChange: (details: DetailConjuntoOrderInterface[]) => void;
@@ -44,7 +46,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
     setProductDetails([
       ...productDetails,
-      { name: "S", quantity: 0, price: initialPrice }, // Set price initially as retail price
+      { name: "XS", quantity: 0, price: initialPrice }, // Set price initially as retail price
     ]);
   };
 
@@ -81,14 +83,17 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
   const removeDetail = (productIndex: number, sizeIndex: number) => {
     const updatedDetails = [...details];
-    updatedDetails[productIndex].detail.splice(sizeIndex, 1);
 
-    if (updatedDetails[productIndex].detail.length === 0) {
-      updatedDetails.splice(productIndex, 1);
+    if (updatedDetails[productIndex]?.detail?.[sizeIndex]) {
+      updatedDetails[productIndex].detail.splice(sizeIndex, 1);
+
+      if (updatedDetails[productIndex].detail.length === 0) {
+        updatedDetails.splice(productIndex, 1);
+      }
+
+      setDetails(updatedDetails);
+      onDetailChange(updatedDetails);
     }
-
-    setDetails(updatedDetails);
-    onDetailChange(updatedDetails);
   };
 
   if (loadingProducts || loadingCategories) return <Loader />;
@@ -131,7 +136,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
               .map((product, index) => (
                 <Combobox.Option key={index} value={product.name}>
                   <Flex align="center" gap="sm">
-                    <Image src={product.image as string} width={30} height={30} alt={product.name} />
+                    <Image src={product.image as string} width={100} height={100} alt={product.name} />
                     <div>
                       <strong>{product.name}</strong>
                       <p>SKU: {product.SKU}</p>
@@ -146,14 +151,20 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       {selectedProduct && (
         <div>
           <Flex gap="md" mt="md">
-            <Image src={selectedProduct.image as string} width={50} height={50} alt={selectedProduct.name} />
+            <Image src={selectedProduct.image as string} width={200} height={200} alt={selectedProduct.name} />
             <div>
               <p>SKU: {selectedProduct.SKU}</p>
+              <p>Nombre: {selectedProduct.name}</p>
+              <p>Descripcion: {selectedProduct.description}</p>
+              <p>
+                Precio al detalle: <strong>${(selectedProduct.retailPrice / 100).toFixed(2)}</strong> | Precio por mayor :{" "}
+                <strong>${(selectedProduct.wholeSalePrice / 100).toFixed(2)}</strong>
+              </p>
             </div>
           </Flex>
 
           {productDetails.map((detail, index) => (
-            <Flex key={index} gap="md" mt="md">
+            <Flex key={index} gap="md" mt="md" align="flex-end">
               <Select
                 label="Tamaño"
                 data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
@@ -161,34 +172,35 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 onChange={(value) => handleSizeChange(index, "name", value as string)}
               />
               <NumberInput label="Cantidad" min={1} value={detail.quantity} onChange={(value) => handleSizeChange(index, "quantity", value)} />
-
-              {/* Select Dropdown for Retail or Wholesale */}
               <Select
                 label="Precio"
-                value={detail.price === selectedProduct.retailPrice ? "Venta al por menor" : "Venta al por mayor"}
+                value={detail.price === selectedProduct?.retailPrice ? "Precio al detalle" : "Precio por mayor"}
                 onChange={(value) => {
-                  const selectedPrice = value === "Venta al por menor" ? selectedProduct.retailPrice : selectedProduct.wholeSalePrice;
-                  handleSizeChange(index, "price", selectedPrice); // Ensure price is set as number
+                  const selectedPrice = value === "Precio al detalle" ? selectedProduct?.retailPrice : selectedProduct?.wholeSalePrice;
+                  handleSizeChange(index, "price", selectedPrice);
                 }}
-                data={["Venta al por menor", "Venta al por mayor"]}
+                data={["Precio al detalle", "Precio por mayor"]}
               />
-
-              {/* Display price */}
-              <NumberInput label="Precio" min={0} value={detail.price || 0} disabled rightSection={<span>${(detail.price || 0).toFixed(2)}</span>} />
-
-              <Button color="red" onClick={() => removeDetail(details.length - 1, index)}>
-                Eliminar
+              <Button
+                variant="outline"
+                color="red"
+                leftSection={<FaRegTrashAlt size={14} />}
+                onClick={() => setProductDetails((prev) => prev.filter((_, i) => i !== index))}
+              >
+                Eliminar Talla
               </Button>
             </Flex>
           ))}
 
-          <Button mt="sm" onClick={addSizeDetail}>
-            Agregar Nuevo Tamaño
-          </Button>
+          <Flex gap="md" align="center">
+            <Button variant="outline" mt="sm" leftSection={<TbRulerMeasure size={14} />} onClick={addSizeDetail}>
+              Agregar Talla
+            </Button>
 
-          <Button mt="md" onClick={addDetail} disabled={!selectedProduct || productDetails.length === 0}>
-            Agregar Producto
-          </Button>
+            <Button mt="md" onClick={addDetail} disabled={!selectedProduct || productDetails.length === 0}>
+              Agregar Producto
+            </Button>
+          </Flex>
         </div>
       )}
 
@@ -196,11 +208,11 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
         <thead>
           <tr>
             <th>Imagen</th>
-            <th>Nombre</th>
-            <th>SKU</th>
-            <th>Tamaño</th>
+            <th style={{ textAlign: "left" }}>Nombre</th>
+            <th style={{ textAlign: "left" }}>SKU</th>
+            <th style={{ textAlign: "center" }}>Tamaño</th>
             <th>Cantidad</th>
-            <th>Precio</th>
+            <th style={{ textAlign: "left" }}>Precio</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -209,16 +221,16 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
             detail.detail.map((sizeDetail, sizeIndex) => (
               <tr key={`${productIndex}-${sizeIndex}`}>
                 <td>
-                  <Image src={detail.product.image as string} width={50} height={50} alt={detail.product.name} />
+                  <Image src={detail.product.image as string} style={{ objectFit: "contain" }} width={50} height={50} alt={detail.product.name} />
                 </td>
                 <td>{detail.product.name}</td>
                 <td>{detail.product.SKU}</td>
-                <td>{sizeDetail.name}</td>
-                <td>{sizeDetail.quantity}</td>
-                <td>${sizeDetail.price.toFixed(2)}</td>
-                <td>
-                  <Button color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
-                    Eliminar
+                <td style={{ textAlign: "center" }}>{sizeDetail.name}</td>
+                <td style={{ textAlign: "center" }}>{sizeDetail.quantity}</td>
+                <td>${(sizeDetail.price / 100).toFixed(2)}</td>
+                <td style={{ textAlign: "center" }}>
+                  <Button variant="outline" color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
+                    <FaRegTrashAlt size={14} />
                   </Button>
                 </td>
               </tr>
