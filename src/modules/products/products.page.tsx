@@ -16,17 +16,9 @@ export const ProductsPage: React.FC = () => {
   const { category: categoryName } = useParams<{ category: string }>();
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const [
-    openedNewProductModal,
-    { open: openNewProduct, close: closeNewProduct },
-  ] = useDisclosure(false);
+  const [openedNewProductModal, { open: openNewProduct, close: closeNewProduct }] = useDisclosure(false);
 
-  const {
-    loading: loadingProducts,
-    error: errorProducts,
-    data: productsData,
-    refetch: refetchProducts,
-  } = useQuery<{ products: Product[] }>(GET_PRODUCTS);
+  const { loading: loadingProducts, error: errorProducts, data: productsData, refetch: refetchProducts } = useQuery<{ products: Product[] }>(GET_PRODUCTS);
 
   const {
     loading: loadingCategories,
@@ -41,14 +33,10 @@ export const ProductsPage: React.FC = () => {
   // Effect to filter products based on category
   useEffect(() => {
     if (productsData && categoriesData) {
-      const category = categoriesData.categories.find(
-        (cat) => cat.name.toLowerCase() === categoryName?.toLowerCase()
-      );
+      const category = categoriesData.categories.find((cat) => cat.name.toLowerCase() === categoryName?.toLowerCase());
 
       if (category) {
-        const filtered = productsData.products.filter(
-          (product) => product.categoryId === category.categoryId
-        );
+        const filtered = productsData.products.filter((product) => product.categoryId === category.categoryId);
 
         setFilteredProducts(filtered);
       } else {
@@ -73,14 +61,7 @@ export const ProductsPage: React.FC = () => {
         </Flex>
 
         {/* Search Bar */}
-        <TextInput
-          placeholder="Buscar productos..."
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          mb="lg"
-          radius="md"
-          size="md"
-        />
+        <TextInput placeholder="Buscar productos..." value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} mb="lg" radius="md" size="md" />
 
         {(loadingProducts || loadingCategories) && <ProductsLoading />}
 
@@ -93,8 +74,8 @@ export const ProductsPage: React.FC = () => {
         {/* Products Grid */}
         {filteredProducts && filteredProducts.length > 0 ? (
           <ProductsGrid
-            filteredProducts={filteredProducts.filter((product) =>
-              product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            filteredProducts={filteredProducts.filter(
+              (product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.SKU.toLowerCase().includes(searchTerm.toLowerCase())
             )}
             onSuccess={() => {
               refetchProducts();
@@ -102,9 +83,7 @@ export const ProductsPage: React.FC = () => {
             }}
           ></ProductsGrid>
         ) : (
-          <NotFound
-            text={`No se encontraron coincidencias para "${searchTerm}"`}
-          />
+          <NotFound text={`No se encontraron coincidencias para "${searchTerm}"`} />
         )}
       </div>
 

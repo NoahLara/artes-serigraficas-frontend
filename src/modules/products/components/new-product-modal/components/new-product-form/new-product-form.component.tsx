@@ -1,11 +1,4 @@
-import {
-  TextInput,
-  NumberInput,
-  Button,
-  Alert,
-  Text,
-  Stack,
-} from "@mantine/core";
+import { TextInput, NumberInput, Button, Alert, Text, Stack } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { FaCheckCircle } from "react-icons/fa";
 import { VscError } from "react-icons/vsc";
@@ -23,16 +16,12 @@ interface ProductFormProps {
   onClose: () => void;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({
-  onSuccess,
-  onClose,
-}) => {
+export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) => {
   const { category: categoryName } = useParams<{ category: string }>();
 
   const [categoryIdToSave, setCategoryIdToSave] = useState<string>("");
 
-  const [createProduct, { error: errorCreateProduct }] =
-    useMutation(CREATE_PRODUCT);
+  const [createProduct, { error: errorCreateProduct }] = useMutation(CREATE_PRODUCT);
 
   const { data: categoriesData } = useQuery<{
     categories: Category[];
@@ -49,12 +38,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       categoryId: "",
     },
     validate: {
-      name: (value) =>
-        value.trim().length === 0 ? "Nombre del producto es obligatorio" : null,
-      retailPrice: (value) =>
-        value <= 0 ? "Precio debe de ser mayor a 0" : null,
-      wholeSalePrice: (value) =>
-        value <= 0 ? "Precio debe de ser mayor a 0" : null,
+      name: (value) => (value.trim().length === 0 ? "Nombre del producto es obligatorio" : null),
+      retailPrice: (value) => (value <= 0 ? "Precio debe de ser mayor a 0" : null),
+      wholeSalePrice: (value) => (value <= 0 ? "Precio debe de ser mayor a 0" : null),
       SKU: (value) => {
         if (value.trim().length === 0) {
           return "Codigo SKU es obligatorio";
@@ -71,9 +57,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   useEffect(() => {
     if (categoryName && categoriesData) {
-      const categoryId = categoriesData.categories.find(
-        (cat) => cat.name.toLowerCase() === categoryName?.toLowerCase()
-      )?.categoryId;
+      const categoryId = categoriesData.categories.find((cat) => cat.name.toLowerCase() === categoryName?.toLowerCase())?.categoryId;
 
       setCategoryIdToSave(categoryId || "");
       form.setFieldValue("categoryId", categoryIdToSave || "");
@@ -135,49 +119,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       </Text>
       {/* PREVIEW IMAGE */}
       <Stack justify="center" align="center" p={25}>
-        <PreviewImageNewProduct
-          value={form.values.image}
-          onChange={(base64: string | ArrayBuffer | null) =>
-            form.setFieldValue("image", base64)
-          }
-        />
+        <PreviewImageNewProduct value={form.values.image} onChange={(base64: string | ArrayBuffer | null) => form.setFieldValue("image", base64)} />
         {form.errors.image && <Alert color="red">{form.errors.image}</Alert>}
       </Stack>
 
-      <TextInput
-        label="Nombre del Producto"
-        placeholder="e.g., Sample Product"
-        withAsterisk
-        {...form.getInputProps("name")}
-      />
-      <NumberInput
-        label="Precio al Detalle"
-        placeholder="e.g., 6.50"
-        decimalScale={2}
-        withAsterisk
-        {...form.getInputProps("retailPrice")}
-      />
+      <TextInput label="Nombre del Producto" placeholder="e.g., Sample Product" withAsterisk {...form.getInputProps("name")} />
+      <NumberInput label="Precio al Detalle" placeholder="e.g., 6.50" decimalScale={2} withAsterisk {...form.getInputProps("retailPrice")} />
 
-      <NumberInput
-        label="Precio por Mayor"
-        placeholder="e.g., 10.35"
-        decimalScale={2}
-        withAsterisk
-        {...form.getInputProps("wholeSalePrice")}
-      />
+      <NumberInput label="Precio por Mayor" placeholder="e.g., 10.35" decimalScale={2} withAsterisk {...form.getInputProps("wholeSalePrice")} />
 
-      <TextInput
-        label="SKU"
-        placeholder="e.g., PRODUCT01"
-        withAsterisk
-        {...form.getInputProps("SKU")}
-      />
+      <TextInput label="SKU" placeholder="e.g., PRODUCT01" withAsterisk {...form.getInputProps("SKU")} />
 
-      <TextInput
-        label="Descripción"
-        placeholder="Describe el producto"
-        {...form.getInputProps("description")}
-      />
+      <TextInput label="Descripción" placeholder="Describe el producto" {...form.getInputProps("description")} />
 
       <Button type="submit" fullWidth mt="lg">
         Crear Producto

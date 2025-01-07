@@ -16,9 +16,7 @@ export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     if (file) {
       setPreview(URL.createObjectURL(file));
@@ -40,26 +38,17 @@ export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({
             src={preview}
             alt="Preview"
             // withPlaceholder
-            width={150}
-            height={150}
+            width={250}
+            height={250}
+            style={{ objectFit: "contain" }}
           />
           <Group ps="center" mt="sm">
-            <Button
-              size="xs"
-              onClick={handleRemove}
-              variant="outline"
-              color="red"
-            >
+            <Button size="xs" onClick={handleRemove} variant="outline" color="red">
               Remove
             </Button>
             <Button size="xs" component="label" variant="outline">
               Replace
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
+              <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
             </Button>
           </Group>
         </Box>
@@ -67,14 +56,7 @@ export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({
         <div onClick={() => fileInputRef.current?.click()}>
           <S.PlaceholderImage>
             <FaImage size={128} color="gray" />
-            <input
-              type="file"
-              id="input-image"
-              accept="image/*"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
+            <input type="file" id="input-image" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
           </S.PlaceholderImage>
         </div>
       )}
