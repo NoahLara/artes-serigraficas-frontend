@@ -112,30 +112,6 @@ export const OrderConjunto = () => {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
-        {/* GENERAL DETAILS SECTION */}
-        <Text size="lg" fw={700}>
-          Detalles Generales
-        </Text>
-
-        <DateTimePicker label="Fecha de Entrega" placeholder="Seleccione la fecha de entrega" withAsterisk {...form.getInputProps("date")} />
-
-        <DateTimePicker
-          label="Fecha de Creación"
-          placeholder="Seleccione la fecha de creación"
-          withAsterisk
-          value={form.values.madeDate as Date}
-          onChange={(date) => form.setFieldValue("madeDate", date || new Date())}
-        />
-
-        <TextInput
-          label="Origen del Pedido"
-          placeholder="Ingrese el origen del pedido (por ejemplo, WhatsApp, Facebook)"
-          withAsterisk
-          {...form.getInputProps("orderSource")}
-        />
-
-        <TextInput label="Nota" placeholder="Ingrese cualquier nota adicional" {...form.getInputProps("note")} />
-
         {/* CUSTOMER DETAILS */}
         <Text size="lg" fw={700}>
           Detalles del Cliente
@@ -206,6 +182,30 @@ export const OrderConjunto = () => {
           withAsterisk
           {...form.getInputProps("payment.restPaymentMethod")}
         />
+
+        {/* GENERAL DETAILS SECTION */}
+        <Text size="lg" fw={700}>
+          Detalles Generales
+        </Text>
+
+        <DateTimePicker label="Fecha de Entrega" placeholder="Seleccione la fecha de entrega" withAsterisk {...form.getInputProps("date")} />
+
+        <DateTimePicker
+          label="Fecha de Creación"
+          placeholder="Seleccione la fecha de creación"
+          withAsterisk
+          value={form.values.madeDate as Date}
+          onChange={(date) => form.setFieldValue("madeDate", date || new Date())}
+        />
+
+        <TextInput
+          label="Origen del Pedido"
+          placeholder="Ingrese el origen del pedido (por ejemplo, WhatsApp, Facebook)"
+          withAsterisk
+          {...form.getInputProps("orderSource")}
+        />
+
+        <TextInput label="Nota del Pedido" placeholder="Ingrese cualquier nota adicional" {...form.getInputProps("note")} />
 
         {/* DELIVERY DETAILS */}
         <Divider my="sm" />
