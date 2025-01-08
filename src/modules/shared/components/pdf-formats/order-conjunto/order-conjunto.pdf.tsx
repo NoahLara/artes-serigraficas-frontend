@@ -49,28 +49,12 @@ export const OrderConjuntoPDF = ({ detailOrder }: ProductProps) => {
       <Page size="LETTER" style={styles.page}>
         {detailOrder.map((order, index) => {
           if (index < 9) {
-            // Get the base64 image string directly
-            const imageSrc = order.product.image?.toString();
-            console.log("Image Source:", imageSrc); // Log the image source for debugging
-
-            // Ensure that the base64 image exists
-            if (!imageSrc || imageSrc.trim().length === 0) {
-              return (
-                <View key={order.product.productId} style={styles.gridCell}>
-                  <Text>No Image Available</Text>
-                  <View style={styles.productDetails}>
-                    {order.detail.map((sizeDetail, idx) => (
-                      <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`}</Text>
-                    ))}
-                  </View>
-                </View>
-              );
-            }
-
+            // Ensure only 9 products per page
             return (
               <View key={order.product.productId} style={styles.gridCell}>
-                {/* Image Rendering */}
-                <Image src={imageSrc} style={styles.productImage} />
+                <View style={styles.productImage}>
+                  <Image src={order.product.image?.toString()} style={styles.productImage} />
+                </View>
                 <View style={styles.productDetails}>
                   {order.detail.map((sizeDetail, idx) => (
                     <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`}</Text>

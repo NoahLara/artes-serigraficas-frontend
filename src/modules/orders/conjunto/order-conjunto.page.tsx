@@ -75,7 +75,7 @@ export const OrderConjunto = () => {
     console.log("Order Form Submitted:", formattedValues);
     console.log("Detail Order:", detailOrder);
 
-    const pdfDocument = formattedValues && detailOrder ? <OrderConjuntoPDF detailOrder={detailOrder} /> : null;
+    const pdfDocument = <OrderConjuntoPDF detailOrder={detailOrder} />;
 
     // Save the PDF document in the state for rendering
     setPdfData(pdfDocument);

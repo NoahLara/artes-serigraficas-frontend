@@ -59,10 +59,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
     if (categoryName && categoriesData) {
       const categoryId = categoriesData.categories.find((cat) => cat.name.toLowerCase() === categoryName?.toLowerCase())?.categoryId;
 
-      setCategoryIdToSave(categoryId || "");
-      form.setFieldValue("categoryId", categoryIdToSave || "");
+      // Set categoryIdToSave only if it's not already set
+      if (categoryId && categoryId !== categoryIdToSave) {
+        setCategoryIdToSave(categoryId); // Only update if necessary
+        form.setFieldValue("categoryId", categoryId); // Update form value once
+      }
     }
-  }, [categoriesData, categoryName, categoryIdToSave, form]);
+  }, [categoryName, categoriesData, form, categoryIdToSave]);
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
