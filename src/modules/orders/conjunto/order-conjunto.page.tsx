@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text } from "@mantine/core";
+import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import dayjs from "dayjs";
 import { OrderConjuntoInterface } from "./order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
 import { DetailOrderConjunto } from "./components/detail-conjunto-order.component";
+import { DateTimePicker } from "@mantine/dates";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
@@ -61,6 +62,7 @@ export const OrderConjunto = () => {
 
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
+    console.log("Validation Errors:", form.errors); // Add this line
     const formattedValues: OrderConjuntoInterface = {
       ...values,
       madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
@@ -71,31 +73,100 @@ export const OrderConjunto = () => {
     console.log("Detail Order:", detailOrder);
   };
 
+  const getTotal = (): string => {
+    if (!detailOrder || detailOrder.length === 0) {
+      return "0.00";
+    }
+
+    const totalCents = detailOrder.reduce((sum, { detail }) => {
+      return (
+        sum +
+        detail.reduce((subSum, { price, quantity }) => {
+          const subtotal = (price || 0) * (quantity || 0);
+          return subSum + subtotal;
+        }, 0)
+      );
+    }, 0);
+
+    return (totalCents / 100).toFixed(2);
+  };
+
+  const getRawTotal = (): number => {
+    if (!detailOrder || detailOrder.length === 0) {
+      return 0;
+    }
+
+    const totalCents = detailOrder.reduce((sum, { detail }) => {
+      return (
+        sum +
+        detail.reduce((subSum, { price, quantity }) => {
+          const subtotal = (price || 0) * (quantity || 0);
+          return subSum + subtotal;
+        }, 0)
+      );
+    }, 0);
+
+    return totalCents;
+  };
+
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
+        {/* GENERAL DETAILS SECTION */}
+        <Text size="lg" fw={700}>
+          Detalles Generales
+        </Text>
+
+        <DateTimePicker label="Fecha de Entrega" placeholder="Seleccione la fecha de entrega" withAsterisk {...form.getInputProps("date")} />
+
+        <DateTimePicker
+          label="Fecha de Creación"
+          placeholder="Seleccione la fecha de creación"
+          withAsterisk
+          value={form.values.madeDate as Date}
+          onChange={(date) => form.setFieldValue("madeDate", date || new Date())}
+        />
+
+        <TextInput
+          label="Origen del Pedido"
+          placeholder="Ingrese el origen del pedido (por ejemplo, WhatsApp, Facebook)"
+          withAsterisk
+          {...form.getInputProps("orderSource")}
+        />
+
+        <TextInput label="Nota" placeholder="Ingrese cualquier nota adicional" {...form.getInputProps("note")} />
+
+        {/* CUSTOMER DETAILS */}
+        <Text size="lg" fw={700}>
+          Detalles del Cliente
+        </Text>
+
+        <Flex gap={5}>
+          <TextInput
+            flex={3}
+            label="Nombre del Cliente"
+            placeholder="Ingrese el nombre del cliente"
+            withAsterisk
+            {...form.getInputProps("customer.customerName")}
+          />
+
+          <TextInput
+            flex={2}
+            label="Correo Electrónico del Cliente"
+            placeholder="Ingrese el correo electrónico (opcional)"
+            {...form.getInputProps("customer.customerEmail")}
+          />
+
+          <TextInput flex={1} label="Teléfono del Cliente" placeholder="9999-9999" withAsterisk {...form.getInputProps("customer.customerPhone")} />
+        </Flex>
+
         {/* ORDER DETAIL */}
+        <Divider my="sm" />
         <Text size="lg" fw={700}>
           Detalle del Pedido
         </Text>
 
         <DetailOrderConjunto onDetailChange={setDetailOrder} />
-
-        {/* CUSTOMER DETAILS */}
-        <Divider my="sm" />
-        <Text size="lg" fw={700}>
-          Detalles del Cliente
-        </Text>
-
-        <TextInput label="Nombre del Cliente" placeholder="Ingrese el nombre del cliente" withAsterisk {...form.getInputProps("customer.customerName")} />
-
-        <TextInput label="Teléfono del Cliente" placeholder="Ingrese el número de teléfono" withAsterisk {...form.getInputProps("customer.customerPhone")} />
-
-        <TextInput
-          label="Correo Electrónico del Cliente"
-          placeholder="Ingrese el correo electrónico (opcional)"
-          {...form.getInputProps("customer.customerEmail")}
-        />
 
         {/* PAYMENT DETAILS */}
         <Divider my="sm" />
@@ -103,7 +174,18 @@ export const OrderConjunto = () => {
           Detalles de Pago
         </Text>
 
-        <NumberInput label="Pago Adelantado" placeholder="Ingrese el pago adelantado" withAsterisk {...form.getInputProps("payment.advancePayment")} />
+        <Text size="lg" fw={700}>
+          Total del Pedido: ${getTotal()}
+        </Text>
+
+        <NumberInput
+          label="Pago Adelantado"
+          placeholder="Ingrese el pago adelantado"
+          withAsterisk
+          {...form.getInputProps("payment.advancePayment")}
+          max={getRawTotal() / 100}
+          min={0}
+        />
 
         <Select
           label="Método de Pago Adelantado"
@@ -113,7 +195,9 @@ export const OrderConjunto = () => {
           {...form.getInputProps("payment.advancePaymentMethod")}
         />
 
-        <NumberInput label="Pago Restante" placeholder="Ingrese el pago restante" withAsterisk {...form.getInputProps("payment.restPayment")} />
+        <Text size="lg" fw={700}>
+          Restate total: ${(getRawTotal() / 100 - form.getValues().payment.advancePayment).toFixed(2)}
+        </Text>
 
         <Select
           label="Método de Pago Restante"
@@ -132,7 +216,7 @@ export const OrderConjunto = () => {
         <Select
           label="Método de Entrega"
           placeholder="Seleccione un método de entrega"
-          data={["Domicilio", "Punto"]}
+          data={["Domicilio", "Punto", "En Local"]}
           withAsterisk
           {...form.getInputProps("delivery.deliveryMethod")}
         />

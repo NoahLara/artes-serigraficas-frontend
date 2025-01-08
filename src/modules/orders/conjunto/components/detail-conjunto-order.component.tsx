@@ -211,6 +211,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
             <th style={{ textAlign: "center" }}>Tamaño</th>
             <th>Cantidad</th>
             <th style={{ textAlign: "left" }}>Precio</th>
+            <th style={{ textAlign: "left" }}>Sub-total</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -226,6 +227,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 <td style={{ textAlign: "center" }}>{sizeDetail.name}</td>
                 <td style={{ textAlign: "center" }}>{sizeDetail.quantity}</td>
                 <td>${(sizeDetail.price / 100).toFixed(2)}</td>
+                <td>${(sizeDetail.quantity * (sizeDetail.price / 100)).toFixed(2)}</td>
                 <td style={{ textAlign: "center" }}>
                   <Button variant="outline" color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
                     <FaRegTrashAlt size={14} />
