@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import dayjs from "dayjs";
@@ -6,6 +6,8 @@ import { OrderConjuntoInterface } from "./order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
 import { DetailOrderConjunto } from "./components/detail-conjunto-order.component";
 import { DateTimePicker } from "@mantine/dates";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { OrderConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/order-conjunto.pdf";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
@@ -59,6 +61,7 @@ export const OrderConjunto = () => {
   });
 
   const [detailOrder, setDetailOrder] = useState<DetailConjuntoOrderInterface[]>([]);
+  const [pdfData, setPdfData] = useState<ReactElement | null>(null);
 
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
@@ -71,6 +74,11 @@ export const OrderConjunto = () => {
 
     console.log("Order Form Submitted:", formattedValues);
     console.log("Detail Order:", detailOrder);
+
+    const pdfDocument = formattedValues && detailOrder ? <OrderConjuntoPDF detailOrder={detailOrder} /> : null;
+
+    // Save the PDF document in the state for rendering
+    setPdfData(pdfDocument);
   };
 
   const getTotal = (): string => {
@@ -228,6 +236,12 @@ export const OrderConjunto = () => {
           <Button type="submit">Enviar Pedido</Button>
         </Group>
       </Stack>
+
+      {pdfData && (
+        <PDFDownloadLink document={pdfData} fileName="orden_conjuntos.pdf">
+          Descargar PDF
+        </PDFDownloadLink>
+      )}
     </form>
   );
 };

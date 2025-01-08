@@ -1,113 +1,87 @@
-import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import { OrderConjuntoPDFProps } from "./order-conjunto.interfaces";
-import { orderStyles } from "./order-conjunto.pdf.styles";
-import { ProductDetail } from "../../../core/interfaces/product-size.interface";
+import React from "react";
+import { Document, Page, Text, Image, View, StyleSheet } from "@react-pdf/renderer";
+import { DetailConjuntoOrderInterface } from "../../../../orders/conjunto/components/detail-conjunto-order.interface";
 
-const Detail = ({ label, value }: { label: string; value: string | number | string[] }) => (
-  <Text style={orderStyles.text}>
-    <Text style={orderStyles.text_bold}>{label}:</Text> {value}
-  </Text>
-);
+// Styles for the PDF document
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  gridCell: {
+    width: "30%",
+    height: "30%",
+    marginBottom: 15,
+    padding: 10,
+    textAlign: "center",
+    border: "1px solid #ddd",
+    boxSizing: "border-box",
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    marginBottom: 10,
+  },
+  productDetails: {
+    fontSize: 10,
+    marginTop: 5,
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 18,
+    marginBottom: 15,
+    fontWeight: "bold",
+  },
+});
 
-// Define PDF content
-export const OrderPDF: React.FC<OrderConjuntoPDFProps> = ({ orderInformation, detailOrder, product }) => {
-  // Filter products with quantity > 0
-  const filterProductsByQuantity = (sizes: ProductDetail[]) => sizes.filter((size) => size.quantity > 0);
+interface ProductProps {
+  detailOrder: DetailConjuntoOrderInterface[];
+}
 
-  const filteredDetailOrder = {
-    Hombre: filterProductsByQuantity(detailOrder.Hombre),
-    Mujer: filterProductsByQuantity(detailOrder.Mujer),
-    Niño: filterProductsByQuantity(detailOrder.Niño),
-  };
-
-  console.log(orderInformation);
-
+export const OrderConjuntoPDF = ({ detailOrder }: ProductProps) => {
   return (
     <Document>
-      <Page size="LETTER" style={orderStyles.page}>
-        {/* Header */}
-        <Text style={orderStyles.header}>PEDIDO DISEÑO PERSONALIZADO</Text>
+      <Page size="LETTER" style={styles.page}>
+        {detailOrder.map((order, index) => {
+          if (index < 9) {
+            // Get the base64 image string directly
+            const imageSrc = order.product.image?.toString();
+            console.log("Image Source:", imageSrc); // Log the image source for debugging
 
-        {/* Product Information*/}
-        <View style={orderStyles.product_information}>
-          <View style={orderStyles.info_container}>
-            <Detail label="SKU" value={product?.SKU} />
-            <Detail label="Producto" value={product?.name} />
-            {/* <Detail label="Cuello" value={orderInformation?.neckType} />
-            <Detail label="Proporción" value={orderInformation.sizeAndFit} />
-            <Detail label="Tela" value={orderInformation.fabric} />
-            <Detail label="Gramaje" value={orderInformation.fabricThickness} />
-            <Detail label="Manga" value={orderInformation.sleeveType} />
-            <Detail label="Técnica" value={orderInformation.customizationTechniques} />
-            <Detail label="Estampar" value={orderInformation.customizationLocations.join(", ")} />
-            <Detail label="Color" value={orderInformation.color} />
-            <Detail label="Propiedades Especiales" value={orderInformation.specialProperties.join(", ")} /> */}
-            <Detail label="Descripción" value={product?.description} />
-          </View>
-          <View style={orderStyles.image_container}>
-            <Image src={product.image?.toString()} style={orderStyles.product_image} />
-          </View>
-        </View>
-
-        <View>
-          <Text>Detalles del Pedido</Text>
-          <View style={orderStyles.table}>
-            <View style={[orderStyles.tableRow, orderStyles.tableHeader]}>
-              <Text style={orderStyles.tableCell}>Categoría</Text>
-              <Text style={orderStyles.tableCell}>Tamaño</Text>
-              <Text style={orderStyles.tableCell}>Cantidad</Text>
-              <Text style={orderStyles.tableCell}>Corte</Text>
-              <Text style={orderStyles.tableCell}>Confeccion</Text>
-              <Text style={orderStyles.tableCell}>Estampado</Text>
-              <Text style={orderStyles.tableCell}>Empacado</Text>
-            </View>
-
-            {Object.entries(filteredDetailOrder).map(([category, sizes]) =>
-              sizes.map((size, index) => (
-                <View style={orderStyles.tableRow} key={`${category}-${index}`}>
-                  <Text style={orderStyles.tableCell}>{category}</Text>
-                  <Text style={orderStyles.tableCell}>{size.name}</Text>
-                  <Text style={orderStyles.tableCell}>{size.quantity}</Text>
-                  <Text style={orderStyles.tableCell}></Text>
-                  <Text style={orderStyles.tableCell}></Text>
-                  <Text style={orderStyles.tableCell}></Text>
-                  <Text style={orderStyles.tableCell}></Text>
+            // Ensure that the base64 image exists
+            if (!imageSrc || imageSrc.trim().length === 0) {
+              return (
+                <View key={order.product.productId} style={styles.gridCell}>
+                  <Text>No Image Available</Text>
+                  <View style={styles.productDetails}>
+                    {order.detail.map((sizeDetail, idx) => (
+                      <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`}</Text>
+                    ))}
+                  </View>
                 </View>
-              ))
-            )}
-          </View>
-        </View>
-        {/* 
-        <View style={orderStyles.section}>
-          <Text style={orderStyles.sectionTitle}>Información del Pago</Text>
-          <Text style={orderStyles.text}>
-            Anticipo: ${orderInformation.advancePayment.toFixed(2)} (
-            {orderInformation.advancePaymentMethod})
-          </Text>
-          <Text style={orderStyles.text}>
-            Pago Restante: ${orderInformation.restPayment.toFixed(2)} (
-            {orderInformation.restPaymentMethod})
-          </Text>
-        </View>
+              );
+            }
 
-        <View style={orderStyles.section}>
-          <Text style={orderStyles.sectionTitle}>Detalles de Entrega</Text>
-          <Text style={orderStyles.text}>
-            Método de Entrega: {orderInformation.deliveryMethod}
-          </Text>
-          <Text style={orderStyles.text}>
-            Punto de Reunión: {orderInformation.meetingPoint}
-          </Text>
-          <Text style={orderStyles.text}>
-            Fecha de Entrega: {orderInformation.deliveryDate}
-          </Text>
-          <Text style={orderStyles.text}>
-            Nota Final: {orderInformation.finalNote || "Sin notas adicionales"}
-          </Text>
-        </View> */}
+            return (
+              <View key={order.product.productId} style={styles.gridCell}>
+                {/* Image Rendering */}
+                <Image src={imageSrc} style={styles.productImage} />
+                <View style={styles.productDetails}>
+                  {order.detail.map((sizeDetail, idx) => (
+                    <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`}</Text>
+                  ))}
+                </View>
+              </View>
+            );
+          }
+          return null; // Return null for out of range products (if more than 9)
+        })}
       </Page>
     </Document>
   );
 };
-
-export default OrderPDF;
