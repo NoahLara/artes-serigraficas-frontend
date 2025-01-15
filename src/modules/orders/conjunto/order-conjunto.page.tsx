@@ -13,7 +13,7 @@ export const OrderConjunto = () => {
   // Form setup with validation rules
   const form = useForm<OrderConjuntoInterface>({
     initialValues: {
-      date: "",
+      date: new Date(),
       madeDate: new Date(),
       orderSource: "",
       customer: {
@@ -61,7 +61,13 @@ export const OrderConjunto = () => {
     console.log("Order Form Submitted:", formattedValues);
     console.log("Detail Order:", detailOrder);
 
-    const pdfDocument = <OrderConjuntoPDF detailOrder={detailOrder} />;
+    const pdfDocument = (
+      <OrderConjuntoPDF
+        detailOrder={detailOrder}
+        customer={form.getValues().customer}
+        deliveryDate={dayjs(form.getValues().date).format("dddd DD MMMM YYYY hh:mm A")}
+      />
+    );
 
     // Save the PDF document in the state for rendering
     setPdfData(pdfDocument);
@@ -182,14 +188,26 @@ export const OrderConjunto = () => {
           Detalles Generales
         </Text>
 
-        <DateTimePicker label="Fecha de Entrega" placeholder="Seleccione la fecha de entrega" withAsterisk {...form.getInputProps("date")} />
-
         <DateTimePicker
           label="Fecha de Creación"
           placeholder="Seleccione la fecha de creación"
           withAsterisk
+          lang="es"
+          clearable
+          valueFormat="DD MMM YYYY hh:mm A"
           value={form.values.madeDate as Date}
           onChange={(date) => form.setFieldValue("madeDate", date || new Date())}
+        />
+
+        <DateTimePicker
+          label="Fecha de Entrega"
+          placeholder="Seleccione la fecha de entrega"
+          withAsterisk
+          lang="es"
+          clearable
+          valueFormat="DD MMM YYYY hh:mm A"
+          value={form.values.date as Date}
+          onChange={(date) => form.setFieldValue("date", date || new Date())}
         />
 
         <TextInput
