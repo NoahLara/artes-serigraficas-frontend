@@ -46,7 +46,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
     setProductDetails([
       ...productDetails,
-      { name: "XS", quantity: 0, price: initialPrice }, // Set price initially as retail price
+      { name: "XS", quantity: 0, price: initialPrice, note: "" }, // Set price initially as retail price
     ]);
   };
 
@@ -73,12 +73,13 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       detail: productDetails,
     };
 
-    setDetails((prevDetails) => [...prevDetails, newDetail]);
-    onDetailChange([...details, newDetail]);
+    console.log(newDetail);
+    // setDetails((prevDetails) => [...prevDetails, newDetail]);
+    // onDetailChange([...details, newDetail]);
 
-    setSelectedProduct(null);
-    setSearchTerm("");
-    setProductDetails([]);
+    // setSelectedProduct(null);
+    // setSearchTerm("");
+    // setProductDetails([]);
   };
 
   const removeDetail = (productIndex: number, sizeIndex: number) => {
@@ -180,6 +181,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 }}
                 data={["Precio al detalle", "Precio por mayor"]}
               />
+              <TextInput label="Nota" placeholder="Agrege una nota" flex={1} onChange={(value) => handleSizeChange(index, "note", value.currentTarget.value)} />
               <Button
                 variant="outline"
                 color="red"
