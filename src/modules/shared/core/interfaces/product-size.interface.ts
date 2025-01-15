@@ -5,5 +5,4 @@ export interface ProductDetail {
   name: AdultSize | ChildSize;
   quantity: number;
   price: number;
-  note: string;
 }

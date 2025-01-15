@@ -13,11 +13,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   gridCell: {
-    width: "30%",
-    height: "30%",
+    width: "25%",
+    height: "25%",
     marginBottom: 15,
     padding: 10,
-    textAlign: "center",
+    textAlign: "justify",
     border: "1px solid #ddd",
     boxSizing: "border-box",
   },
@@ -25,11 +25,21 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    marginBottom: 10,
+    marginBottom: 1,
   },
   productDetails: {
-    fontSize: 10,
-    marginTop: 5,
+    fontSize: 5,
+    marginTop: 2,
+  },
+  noteStyles: {
+    fontSize: 5,
+    marginTop: 2,
+  },
+  flexProductsDetails: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 3,
   },
   title: {
     textAlign: "center",
@@ -48,17 +58,23 @@ export const OrderConjuntoPDF = ({ detailOrder }: ProductProps) => {
     <Document>
       <Page size="LETTER" style={styles.page}>
         {detailOrder.map((order, index) => {
-          if (index < 9) {
-            // Ensure only 9 products per page
+          if (index < 16) {
+            // Ensure only 16 products per page
             return (
               <View key={order.product.productId} style={styles.gridCell}>
                 <View style={styles.productImage}>
                   <Image src={order.product.image?.toString()} style={styles.productImage} />
                 </View>
                 <View style={styles.productDetails}>
-                  {order.detail.map((sizeDetail, idx) => (
-                    <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`}</Text>
-                  ))}
+                  <View style={styles.flexProductsDetails}>
+                    <Text>Tallas: </Text>
+                    {order.detail.map((sizeDetail, idx) => (
+                      <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`} </Text>
+                    ))}
+                  </View>
+                </View>
+                <View style={styles.noteStyles}>
+                  <Text>Nota: {order.note}</Text>
                 </View>
               </View>
             );

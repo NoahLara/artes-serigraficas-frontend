@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Select, NumberInput, Flex, Image, Loader, CloseButton, Combobox, TextInput, useCombobox } from "@mantine/core";
+import { Button, Table, Select, NumberInput, Flex, Image, Loader, CloseButton, Combobox, TextInput, useCombobox, Textarea } from "@mantine/core";
 import { useQuery } from "@apollo/client";
 import { Category, Product, ProductDetail } from "../../../shared/core/interfaces";
 import { DetailConjuntoOrderInterface } from "./detail-conjunto-order.interface";
@@ -16,6 +16,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productNote, setProductNote] = useState<string>("");
   const [details, setDetails] = useState<DetailConjuntoOrderInterface[]>([]);
   const [productDetails, setProductDetails] = useState<ProductDetail[]>([]);
 
@@ -46,7 +47,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
     setProductDetails([
       ...productDetails,
-      { name: "XS", quantity: 0, price: initialPrice, note: "" }, // Set price initially as retail price
+      { name: "XS", quantity: 0, price: initialPrice }, // Set price initially as retail price
     ]);
   };
 
@@ -71,6 +72,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
     const newDetail: DetailConjuntoOrderInterface = {
       product: selectedProduct,
       detail: productDetails,
+      note: productNote,
     };
 
     setDetails((prevDetails) => [...prevDetails, newDetail]);
@@ -78,6 +80,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
     setSelectedProduct(null);
     setSearchTerm("");
+    setProductNote("");
     setProductDetails([]);
   };
 
@@ -160,6 +163,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 <strong>${(selectedProduct.wholeSalePrice / 100).toFixed(2)}</strong>
               </p>
             </div>
+            <Textarea label="Nota" placeholder="Agrege una nota al producto" flex={1} onChange={(value) => setProductNote(value.currentTarget.value)} />
           </Flex>
 
           {productDetails.map((detail, index) => (
@@ -180,7 +184,6 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 }}
                 data={["Precio al detalle", "Precio por mayor"]}
               />
-              <TextInput label="Nota" placeholder="Agrege una nota" flex={1} onChange={(value) => handleSizeChange(index, "note", value.currentTarget.value)} />
               <Button
                 variant="outline"
                 color="red"
