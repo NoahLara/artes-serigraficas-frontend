@@ -15,7 +15,6 @@ export const OrderConjunto = () => {
     initialValues: {
       date: new Date(),
       madeDate: new Date(),
-      orderSource: "",
       customer: {
         customerName: "",
         customerPhone: "",
@@ -32,7 +31,6 @@ export const OrderConjunto = () => {
     validate: {
       date: (value) => (!value ? "La fecha de entrega es obligatoria" : null),
       madeDate: (value) => (!value ? "La fecha de creación es obligatoria" : null),
-      orderSource: (value) => (value.trim().length === 0 ? "El origen del pedido es obligatorio" : null),
       customer: {
         customerName: (value) => (value.trim().length === 0 ? "El nombre del cliente es obligatorio" : null),
         customerPhone: (value) => (value.trim().length === 0 ? "El número de teléfono es obligatorio" : null),
@@ -51,7 +49,7 @@ export const OrderConjunto = () => {
 
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
-    console.log("Validation Errors:", form.errors); // Add this line
+    // FOR FACTURA
     const formattedValues: OrderConjuntoInterface = {
       ...values,
       madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
@@ -208,13 +206,6 @@ export const OrderConjunto = () => {
           valueFormat="DD MMM YYYY hh:mm A"
           value={form.values.date as Date}
           onChange={(date) => form.setFieldValue("date", date || new Date())}
-        />
-
-        <TextInput
-          label="Origen del Pedido"
-          placeholder="Ingrese el origen del pedido (por ejemplo, WhatsApp, Facebook)"
-          withAsterisk
-          {...form.getInputProps("orderSource")}
         />
 
         {/* SUBMIT BUTTON */}
