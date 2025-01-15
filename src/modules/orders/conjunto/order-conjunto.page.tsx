@@ -16,7 +16,6 @@ export const OrderConjunto = () => {
       date: "",
       madeDate: new Date(),
       orderSource: "",
-      note: "",
       customer: {
         customerName: "",
         customerPhone: "",
@@ -27,10 +26,6 @@ export const OrderConjunto = () => {
         advancePaymentMethod: "",
         restPayment: 0.0,
         restPaymentMethod: "",
-      },
-      delivery: {
-        deliveryMethod: "",
-        meetingPoint: "",
       },
     },
 
@@ -47,15 +42,6 @@ export const OrderConjunto = () => {
         advancePaymentMethod: (value) => (value.trim().length === 0 ? "El método de pago es obligatorio" : null),
         restPayment: (value) => (value < 0 ? "El pago restante no puede ser negativo" : null),
         restPaymentMethod: (value) => (value.trim().length === 0 ? "El método de pago es obligatorio" : null),
-      },
-      delivery: {
-        deliveryMethod: (value) => (value.trim().length === 0 ? "El método de entrega es obligatorio" : null),
-        meetingPoint: (value, values) => {
-          if (values.delivery.deliveryMethod === "Punto" && (!value || value.trim().length === 0)) {
-            return "El punto de encuentro es obligatorio para entregas en Punto";
-          }
-          return null;
-        },
       },
     },
   });
@@ -212,24 +198,6 @@ export const OrderConjunto = () => {
           withAsterisk
           {...form.getInputProps("orderSource")}
         />
-
-        <TextInput label="Nota del Pedido" placeholder="Ingrese cualquier nota adicional" {...form.getInputProps("note")} />
-
-        {/* DELIVERY DETAILS */}
-        <Divider my="sm" />
-        <Text size="lg" fw={700}>
-          Detalles de Entrega
-        </Text>
-
-        <Select
-          label="Método de Entrega"
-          placeholder="Seleccione un método de entrega"
-          data={["Domicilio", "Punto", "En Local"]}
-          withAsterisk
-          {...form.getInputProps("delivery.deliveryMethod")}
-        />
-
-        <TextInput label="Punto de Encuentro" placeholder="Ingrese el punto de encuentro (si aplica)" {...form.getInputProps("delivery.meetingPoint")} />
 
         {/* SUBMIT BUTTON */}
         <Group mt="md">

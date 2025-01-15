@@ -73,13 +73,12 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
       detail: productDetails,
     };
 
-    console.log(newDetail);
-    // setDetails((prevDetails) => [...prevDetails, newDetail]);
-    // onDetailChange([...details, newDetail]);
+    setDetails((prevDetails) => [...prevDetails, newDetail]);
+    onDetailChange([...details, newDetail]);
 
-    // setSelectedProduct(null);
-    // setSearchTerm("");
-    // setProductDetails([]);
+    setSelectedProduct(null);
+    setSearchTerm("");
+    setProductDetails([]);
   };
 
   const removeDetail = (productIndex: number, sizeIndex: number) => {
