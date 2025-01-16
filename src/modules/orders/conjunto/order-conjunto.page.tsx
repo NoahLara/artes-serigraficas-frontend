@@ -21,7 +21,6 @@ export const OrderConjunto = () => {
       customer: {
         customerName: "",
         customerPhone: "",
-        customerEmail: "",
       },
       payment: {
         advancePayment: 0.0,
@@ -127,13 +126,6 @@ export const OrderConjunto = () => {
             placeholder="Ingrese el nombre del cliente"
             withAsterisk
             {...form.getInputProps("customer.customerName")}
-          />
-
-          <TextInput
-            flex={2}
-            label="Correo Electrónico del Cliente"
-            placeholder="Ingrese el correo electrónico (opcional)"
-            {...form.getInputProps("customer.customerEmail")}
           />
 
           <TextInput flex={1} label="Teléfono del Cliente" placeholder="9999-9999" withAsterisk {...form.getInputProps("customer.customerPhone")} />

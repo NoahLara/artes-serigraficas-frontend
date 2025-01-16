@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     width: "25%",
     height: "25%",
     marginBottom: 15,
-    padding: 10,
     textAlign: "justify",
     border: "1px solid #ddd",
     boxSizing: "border-box",
@@ -29,15 +28,15 @@ const styles = StyleSheet.create({
   productImage: {
     width: "100%",
     height: "100%",
-    objectFit: "cover",
+    objectFit: "contain",
     marginBottom: 1,
   },
   productDetails: {
-    fontSize: 5,
+    fontSize: 8,
     marginTop: 2,
   },
   noteStyles: {
-    fontSize: 5,
+    fontSize: 8,
     marginTop: 2,
   },
   flexProductsDetails: {
@@ -48,7 +47,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "left",
-    fontSize: 5,
+    fontSize: 10,
     fontWeight: "bold",
   },
 });
@@ -80,7 +79,7 @@ export const OrderConjuntoPDF = ({ detailOrder, customer, deliveryDate }: Produc
                   </View>
                   <View style={styles.productDetails}>
                     <View style={styles.flexProductsDetails}>
-                      <Text>Tallas: </Text>
+                      <Text>Tallas:</Text>
                       {order.detail.map((sizeDetail, idx) => (
                         <Text key={idx}>{`${sizeDetail.name}: ${sizeDetail.quantity}`} </Text>
                       ))}
