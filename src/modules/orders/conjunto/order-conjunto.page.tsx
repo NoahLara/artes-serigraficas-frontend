@@ -1,13 +1,16 @@
 import { ReactElement, useState } from "react";
-import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex } from "@mantine/core";
+import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { MdAssignmentAdd } from "react-icons/md";
 import dayjs from "dayjs";
 import { OrderConjuntoInterface } from "./order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
 import { DetailOrderConjunto } from "./components/detail-conjunto-order.component";
 import { DateTimePicker } from "@mantine/dates";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { DocumentProps, pdf } from "@react-pdf/renderer";
 import { OrderConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/order-conjunto.pdf";
+import { useDisclosure } from "@mantine/hooks";
+import * as S from "./order-conjunto.styles";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
@@ -45,7 +48,8 @@ export const OrderConjunto = () => {
   });
 
   const [detailOrder, setDetailOrder] = useState<DetailConjuntoOrderInterface[]>([]);
-  const [pdfData, setPdfData] = useState<ReactElement | null>(null);
+  const [pdfData, setPdfData] = useState<ReactElement<DocumentProps> | null>(null);
+  const [openedPDFModal, { open: openPDFModal, close: closePDFModal }] = useDisclosure(false);
 
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
@@ -69,6 +73,7 @@ export const OrderConjunto = () => {
 
     // Save the PDF document in the state for rendering
     setPdfData(pdfDocument);
+    openPDFModal();
   };
 
   const getTotal = (): string => {
@@ -210,15 +215,34 @@ export const OrderConjunto = () => {
 
         {/* SUBMIT BUTTON */}
         <Group mt="md">
-          <Button type="submit">Enviar Pedido</Button>
+          <Button type="submit">Generar Pedido</Button>
         </Group>
       </Stack>
 
-      {pdfData && (
-        <PDFDownloadLink document={pdfData} fileName="orden_conjuntos.pdf">
-          Descargar PDF
-        </PDFDownloadLink>
-      )}
+      <Modal opened={openedPDFModal} onClose={closePDFModal} title="Hojas de Pedido">
+        {/* HOJA PEDIDO */}
+        {pdfData && (
+          <S.ModalContainer>
+            {/* HOJA DE PEDIDO */}
+            <S.CardPDF
+              onClick={async () => {
+                // Ensure pdfData is not null
+                if (pdfData) {
+                  // Generate the PDF as a Blob
+                  const blob = await pdf(pdfData).toBlob();
+
+                  // Create a URL for the Blob and open it in a new tab
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, "_blank");
+                }
+              }}
+            >
+              <MdAssignmentAdd className="iconPdf" />
+              <span>Hoja de Pedido</span>
+            </S.CardPDF>
+          </S.ModalContainer>
+        )}
+      </Modal>
     </form>
   );
 };
