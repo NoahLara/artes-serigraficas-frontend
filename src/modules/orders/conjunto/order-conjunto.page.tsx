@@ -47,6 +47,7 @@ export const OrderConjunto = () => {
   });
 
   const [detailOrder, setDetailOrder] = useState<DetailConjuntoOrderInterface[]>([]);
+  const [total, setTotal] = useState<number>(0);
   const [pdfData, setPdfData] = useState<ReactElement<DocumentProps> | null>(null);
   const [openedPDFModal, { open: openPDFModal, close: closePDFModal }] = useDisclosure(false);
 
@@ -75,40 +76,16 @@ export const OrderConjunto = () => {
     openPDFModal();
   };
 
-  const getTotal = (): string => {
-    if (!detailOrder || detailOrder.length === 0) {
-      return "0.00";
-    }
-
-    const totalCents = detailOrder.reduce((sum, { detail }) => {
-      return (
-        sum +
-        detail.reduce((subSum, { price, quantity }) => {
-          const subtotal = (price || 0) * (quantity || 0);
-          return subSum + subtotal;
-        }, 0)
-      );
+  const getTotal = (details: DetailConjuntoOrderInterface[]) => {
+    return details.reduce((totalSum, detail) => {
+      const productTotal = detail.detail.reduce((sizeSum, sizeDetail) => sizeSum + sizeDetail.quantity * (sizeDetail.price / 100), 0);
+      return totalSum + productTotal;
     }, 0);
-
-    return (totalCents / 100).toFixed(2);
   };
 
-  const getRawTotal = (): number => {
-    if (!detailOrder || detailOrder.length === 0) {
-      return 0;
-    }
-
-    const totalCents = detailOrder.reduce((sum, { detail }) => {
-      return (
-        sum +
-        detail.reduce((subSum, { price, quantity }) => {
-          const subtotal = (price || 0) * (quantity || 0);
-          return subSum + subtotal;
-        }, 0)
-      );
-    }, 0);
-
-    return totalCents;
+  const handleDetailChange = (updatedDetails: DetailConjuntoOrderInterface[]) => {
+    setDetailOrder(updatedDetails);
+    setTotal(getTotal(updatedDetails)); // Recalculate total
   };
 
   return (
@@ -137,7 +114,7 @@ export const OrderConjunto = () => {
           Detalle del Pedido
         </Text>
 
-        <DetailOrderConjunto onDetailChange={setDetailOrder} />
+        <DetailOrderConjunto onDetailChange={handleDetailChange} />
 
         {/* PAYMENT DETAILS */}
         <Divider my="sm" />
@@ -146,7 +123,7 @@ export const OrderConjunto = () => {
         </Text>
 
         <Text size="lg" fw={700}>
-          Total del Pedido: ${getTotal()}
+          Total del Pedido: ${total.toFixed(2)}
         </Text>
 
         <NumberInput
@@ -154,7 +131,7 @@ export const OrderConjunto = () => {
           placeholder="Ingrese el pago adelantado"
           withAsterisk
           {...form.getInputProps("payment.advancePayment")}
-          max={getRawTotal() / 100}
+          max={total}
           min={0}
         />
 
@@ -167,7 +144,7 @@ export const OrderConjunto = () => {
         />
 
         <Text size="lg" fw={700}>
-          Restate total: ${(getRawTotal() / 100 - form.getValues().payment.advancePayment).toFixed(2)}
+          Restate total: ${(total - form.getValues().payment.advancePayment).toFixed(2)}
         </Text>
 
         <Select

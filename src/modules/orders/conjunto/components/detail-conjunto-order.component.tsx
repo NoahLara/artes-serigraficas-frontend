@@ -36,7 +36,13 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
 
   const handleProductSelect = (productName: string) => {
     const product = filteredProducts.find((p) => p.name === productName);
-    if (product) setSelectedProduct(product);
+    if (product) {
+      setSelectedProduct(product);
+
+      // Check if product is already in details and prefill the note
+      const existingDetail = details.find((detail) => detail.product.productId === product.productId);
+      setProductNote(existingDetail ? existingDetail.note : "");
+    }
   };
 
   const addSizeDetail = () => {
@@ -69,15 +75,27 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
   const addDetail = () => {
     if (!selectedProduct || productDetails.length === 0) return;
 
+    const existingIndex = details.findIndex((detail) => detail.product.productId === selectedProduct.productId);
+
     const newDetail: DetailConjuntoOrderInterface = {
       product: selectedProduct,
       detail: productDetails,
       note: productNote,
     };
 
-    setDetails((prevDetails) => [...prevDetails, newDetail]);
-    onDetailChange([...details, newDetail]);
+    const updatedDetails = [...details];
 
+    if (existingIndex > -1) {
+      // Merge sizes into existing product
+      updatedDetails[existingIndex].detail = [...updatedDetails[existingIndex].detail, ...newDetail.detail];
+      updatedDetails[existingIndex].note = productNote; // Update note
+    } else {
+      // Add as new product
+      updatedDetails.push(newDetail);
+    }
+
+    setDetails(updatedDetails);
+    onDetailChange(updatedDetails); // Notify parent
     setSelectedProduct(null);
     setSearchTerm("");
     setProductNote("");
@@ -85,18 +103,21 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
   };
 
   const removeDetail = (productIndex: number, sizeIndex: number) => {
-    const updatedDetails = [...details];
+    setDetails((prevDetails) => {
+      const updatedDetails = [...prevDetails];
 
-    if (updatedDetails[productIndex]?.detail?.[sizeIndex]) {
-      updatedDetails[productIndex].detail.splice(sizeIndex, 1);
+      if (updatedDetails[productIndex]?.detail?.[sizeIndex]) {
+        updatedDetails[productIndex].detail.splice(sizeIndex, 1);
 
-      if (updatedDetails[productIndex].detail.length === 0) {
-        updatedDetails.splice(productIndex, 1);
+        // If no sizes left for the product, remove the product entirely
+        if (updatedDetails[productIndex].detail.length === 0) {
+          updatedDetails.splice(productIndex, 1);
+        }
       }
 
-      setDetails(updatedDetails);
-      onDetailChange(updatedDetails);
-    }
+      onDetailChange(updatedDetails); // Update parent with new details
+      return updatedDetails;
+    });
   };
 
   if (loadingProducts || loadingCategories) return <Loader />;
@@ -163,7 +184,13 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 <strong>${(selectedProduct.wholeSalePrice / 100).toFixed(2)}</strong>
               </p>
             </div>
-            <Textarea label="Nota" placeholder="Agrege una nota al producto" flex={1} onChange={(value) => setProductNote(value.currentTarget.value)} />
+            <Textarea
+              flex={1}
+              label="Nota"
+              placeholder="Agrega una nota al producto"
+              value={productNote}
+              onChange={(value) => setProductNote(value.currentTarget.value)}
+            />
           </Flex>
 
           {productDetails.map((detail, index) => (
