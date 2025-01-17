@@ -2,6 +2,7 @@ import { ReactElement, useState } from "react";
 import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex, Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MdAssignmentAdd } from "react-icons/md";
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import dayjs from "dayjs";
 import { OrderConjuntoInterface } from "./order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
@@ -11,6 +12,7 @@ import { DocumentProps, pdf } from "@react-pdf/renderer";
 import { OrderConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/order-conjunto.pdf";
 import { useDisclosure } from "@mantine/hooks";
 import * as S from "./order-conjunto.styles";
+import { InvoicePDF } from "../../shared/components/pdf-formats/invoice/invoice.pdf";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
@@ -48,7 +50,8 @@ export const OrderConjunto = () => {
 
   const [detailOrder, setDetailOrder] = useState<DetailConjuntoOrderInterface[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [pdfData, setPdfData] = useState<ReactElement<DocumentProps> | null>(null);
+  const [pdfOrderData, setPdfOrderData] = useState<ReactElement<DocumentProps> | null>(null);
+  const [pdfInvoiceData, setPdfInvoiceData] = useState<ReactElement<DocumentProps> | null>(null);
   const [openedPDFModal, { open: openPDFModal, close: closePDFModal }] = useDisclosure(false);
 
   // Handle form submission
@@ -71,8 +74,12 @@ export const OrderConjunto = () => {
       />
     );
 
+    const pdfInvoice = <InvoicePDF detailOrder={detailOrder} />;
+
     // Save the PDF document in the state for rendering
-    setPdfData(pdfDocument);
+    setPdfOrderData(pdfDocument);
+    // Save the PDF Invoice document in the state for rendering
+    setPdfInvoiceData(pdfInvoice);
     openPDFModal();
   };
 
@@ -190,15 +197,15 @@ export const OrderConjunto = () => {
 
       <Modal opened={openedPDFModal} onClose={closePDFModal} title="Hojas de Pedido">
         {/* HOJA PEDIDO */}
-        {pdfData && (
+        {pdfOrderData && (
           <S.ModalContainer>
             {/* HOJA DE PEDIDO */}
             <S.CardPDF
               onClick={async () => {
-                // Ensure pdfData is not null
-                if (pdfData) {
+                // Ensure pdfOrderData is not null
+                if (pdfOrderData) {
                   // Generate the PDF as a Blob
-                  const blob = await pdf(pdfData).toBlob();
+                  const blob = await pdf(pdfOrderData).toBlob();
 
                   // Create a URL for the Blob and open it in a new tab
                   const url = URL.createObjectURL(blob);
@@ -208,6 +215,23 @@ export const OrderConjunto = () => {
             >
               <MdAssignmentAdd className="iconPdf" />
               <span>Hoja de Pedido</span>
+            </S.CardPDF>
+
+            <S.CardPDF
+              onClick={async () => {
+                // Ensure pdfOrderData is not null
+                if (pdfInvoiceData) {
+                  // Generate the PDF as a Blob
+                  const blob = await pdf(pdfInvoiceData).toBlob();
+
+                  // Create a URL for the Blob and open it in a new tab
+                  const url = URL.createObjectURL(blob);
+                  window.open(url, "_blank");
+                }
+              }}
+            >
+              <FaFileInvoiceDollar className="iconPdf" />
+              <span>Factura</span>
             </S.CardPDF>
           </S.ModalContainer>
         )}

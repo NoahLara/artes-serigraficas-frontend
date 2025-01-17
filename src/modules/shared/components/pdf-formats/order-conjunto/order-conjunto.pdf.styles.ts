@@ -1,5 +1,54 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
+// Styles for the PDF document
+export const stylesSheet = StyleSheet.create({
+  page: {
+    padding: 30,
+    display: "flex",
+    flexDirection: "column",
+  },
+  detailContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    height: "90%",
+  },
+  gridCell: {
+    width: "33%",
+    height: "25%",
+    marginBottom: 15,
+    textAlign: "justify",
+    border: "1px solid #ddd",
+    boxSizing: "border-box",
+  },
+  productImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    marginBottom: 1,
+  },
+  productDetails: {
+    fontSize: 8,
+    marginTop: 2,
+  },
+  noteStyles: {
+    fontSize: 8,
+    marginTop: 2,
+  },
+  flexProductsDetails: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 3,
+  },
+  title: {
+    textAlign: "left",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+});
+
 export const orderStyles = StyleSheet.create({
   page: {
     padding: 50,
