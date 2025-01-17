@@ -1,4 +1,3 @@
-// Import required libraries
 import React from "react";
 import { Document, Page, Text, View, Image } from "@react-pdf/renderer";
 import { invoiceStyle } from "./invoice.pdf.styles";
@@ -21,7 +20,10 @@ const generateRandomID = () => {
   return id.toUpperCase();
 };
 
-export const InvoicePDF: React.FC<{ detailOrder: DetailConjuntoOrderInterface[] }> = ({ detailOrder }) => {
+export const InvoicePDF: React.FC<{
+  detailOrder: DetailConjuntoOrderInterface[];
+  paymentInAdvance: number;
+}> = ({ detailOrder, paymentInAdvance }) => {
   // Dummy data
   const companyDetails = {
     logo: "../../../../../assets/as-orginal.png", // Replace with your logo URL
@@ -31,6 +33,19 @@ export const InvoicePDF: React.FC<{ detailOrder: DetailConjuntoOrderInterface[] 
     date: dayjs(new Date()).format("dddd DD MMMM YYYY hh:mm A"),
     phone: "7743-7294",
   };
+
+  // Calculate totals
+  const totalAmount =
+    detailOrder.reduce((total, detail) => {
+      return (
+        total +
+        detail.detail.reduce((subTotal, size) => {
+          return subTotal + size.quantity * size.price;
+        }, 0)
+      );
+    }, 0) / 100; // Convert cents to dollars
+
+  const pendingAmount = totalAmount - paymentInAdvance;
 
   return (
     <Document>
@@ -65,10 +80,44 @@ export const InvoicePDF: React.FC<{ detailOrder: DetailConjuntoOrderInterface[] 
                 <Text style={invoiceStyle.tableCell}>{size.name}</Text>
                 <Text style={invoiceStyle.tableCell}>{size.quantity}</Text>
                 <Text style={invoiceStyle.tableCell}>${(size.price / 100).toFixed(2)}</Text>
-                <Text style={invoiceStyle.tableCell}>${((size.price * size.quantity) / 100).toFixed(2)} </Text>
+                <Text style={invoiceStyle.tableCell}>${((size.price * size.quantity) / 100).toFixed(2)}</Text>
               </View>
             ))
           )}
+
+          {/* Total Row */}
+          <View style={invoiceStyle.tableRow}>
+            <Text style={invoiceStyle.tableCellDescription}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}>Total</Text>
+            <Text style={invoiceStyle.tableCell}>${totalAmount.toFixed(2)}</Text>
+          </View>
+
+          {/* Payment in Advance Row */}
+          <View style={invoiceStyle.tableRow}>
+            <Text style={invoiceStyle.tableCellDescription}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}>Anticipo</Text>
+            <Text style={invoiceStyle.tableCell}>${paymentInAdvance.toFixed(2)}</Text>
+          </View>
+
+          {/* Pending Amount Row */}
+          <View style={invoiceStyle.tableRow}>
+            <Text style={invoiceStyle.tableCellDescription}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}></Text>
+            <Text style={invoiceStyle.tableCell}>Resta</Text>
+            <Text style={invoiceStyle.tableCell}>${pendingAmount.toFixed(2)}</Text>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <View style={invoiceStyle.footer}>
+          <Text style={invoiceStyle.textInfoCompany}>Gracias por su compra.</Text>
+          <Text style={invoiceStyle.textInfoCompany}>Anticipo: ${paymentInAdvance.toFixed(2)}</Text>
+          <Text style={invoiceStyle.textInfoCompany}>Pendiente por pagar: ${pendingAmount.toFixed(2)}</Text>
         </View>
       </Page>
     </Document>
