@@ -48,23 +48,15 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
   const addSizeDetail = () => {
     if (!selectedProduct) return;
 
-    // Default the price to 0 or retail price based on initial selection
-    const initialPrice = selectedProduct.retailPrice; // Default to retail price
-
     setProductDetails([
       ...productDetails,
-      { name: "XS", quantity: 0, price: initialPrice }, // Set price initially as retail price
+      { name: "XS", quantity: 0 }, // Set price initially as retail price
     ]);
   };
 
   const handleSizeChange = (index: number, field: keyof ProductDetail, value: string | number) => {
     const updatedDetails = productDetails.map((detail, i) => {
       if (i === index) {
-        if (field === "price") {
-          // Convert value to number if it's not already
-          const priceValue = typeof value === "number" ? value : parseFloat(value.toString());
-          return { ...detail, price: priceValue };
-        }
         return { ...detail, [field]: value };
       }
       return detail;
@@ -202,15 +194,6 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 onChange={(value) => handleSizeChange(index, "name", value as string)}
               />
               <NumberInput label="Cantidad" min={1} value={detail.quantity} onChange={(value) => handleSizeChange(index, "quantity", value)} />
-              <Select
-                label="Precio"
-                value={detail.price === selectedProduct?.retailPrice ? "Precio al detalle" : "Precio por mayor"}
-                onChange={(value) => {
-                  const selectedPrice = value === "Precio al detalle" ? selectedProduct?.retailPrice : selectedProduct?.wholeSalePrice;
-                  handleSizeChange(index, "price", selectedPrice);
-                }}
-                data={["Precio al detalle", "Precio por mayor"]}
-              />
               <Button
                 variant="outline"
                 color="red"
@@ -243,7 +226,6 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
             <th>Cantidad</th>
             <th style={{ textAlign: "left" }}>Precio</th>
             <th style={{ textAlign: "left" }}>Sub-total</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -257,8 +239,8 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
                 <td>{detail.product.SKU}</td>
                 <td style={{ textAlign: "center" }}>{sizeDetail.name}</td>
                 <td style={{ textAlign: "center" }}>{sizeDetail.quantity}</td>
-                <td>${(sizeDetail.price / 100).toFixed(2)}</td>
-                <td>${(sizeDetail.quantity * (sizeDetail.price / 100)).toFixed(2)}</td>
+                <td>${(detail.product.wholeSalePrice / 100).toFixed(2)}</td>
+                <td>${(sizeDetail.quantity * (detail.product.wholeSalePrice / 100)).toFixed(2)}</td>
                 <td style={{ textAlign: "center" }}>
                   <Button variant="outline" color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
                     <FaRegTrashAlt size={14} />

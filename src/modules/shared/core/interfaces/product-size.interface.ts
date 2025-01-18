@@ -4,5 +4,4 @@ export type ChildSize = 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16;
 export interface ProductDetail {
   name: AdultSize | ChildSize;
   quantity: number;
-  price: number;
 }

@@ -67,13 +67,27 @@ export const InvoicePDF: React.FC<{
         {/* Table of products */}
         <View style={invoiceStyle.table}>
           <View style={invoiceStyle.tableRow}>
+            <Text style={invoiceStyle.tableCell}>SKU</Text>
             <Text style={invoiceStyle.tableCellDescription}>DETALLE</Text>
-            <Text style={invoiceStyle.tableCell}>TALLA</Text>
             <Text style={invoiceStyle.tableCell}>CANTIDAD</Text>
             <Text style={invoiceStyle.tableCell}>PRECIO</Text>
             <Text style={invoiceStyle.tableCell}>IMPORTE</Text>
           </View>
-          {detailOrder.map((detail) =>
+          {detailOrder.map((itemOrder, index) => (
+            <View style={invoiceStyle.tableRow} key={index}>
+              <Text style={invoiceStyle.tableCell}>{itemOrder.product.SKU}</Text>
+              <Text style={invoiceStyle.tableCellDescription}>{itemOrder.product.name}</Text>
+              <Text style={invoiceStyle.tableCell}>{itemOrder.detail.reduce((totalQuantity, det) => totalQuantity + det.quantity, 0)}</Text>
+              <Text style={invoiceStyle.tableCell}>
+                ${((itemOrder.detail.length > 11 ? itemOrder.product.wholeSalePrice : itemOrder.product.retailPrice) / 100).toFixed(2)}
+              </Text>
+              <Text style={invoiceStyle.tableCell}>
+                ${(itemOrder.detail.reduce((subTotal, det) => subTotal + det.price * det.quantity, 0) / 100).toFixed(2)}
+              </Text>
+            </View>
+          ))}
+
+          {/* {detailOrder.map((detail) =>
             detail.detail.map((size, index) => (
               <View style={invoiceStyle.tableRow} key={index}>
                 <Text style={invoiceStyle.tableCellDescription}>{detail.product.name}</Text>
@@ -83,7 +97,7 @@ export const InvoicePDF: React.FC<{
                 <Text style={invoiceStyle.tableCell}>${((size.price * size.quantity) / 100).toFixed(2)}</Text>
               </View>
             ))
-          )}
+          )} */}
 
           {/* Total Row */}
           <View style={invoiceStyle.tableRow}>
