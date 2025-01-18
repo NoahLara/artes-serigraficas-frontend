@@ -85,7 +85,7 @@ export const OrderConjunto = () => {
 
   const getTotal = (details: DetailConjuntoOrderInterface[]) => {
     return details.reduce((totalSum, detail) => {
-      const productTotal = detail.detail.reduce((sizeSum, sizeDetail) => sizeSum + sizeDetail.quantity * (sizeDetail.price / 100), 0);
+      const productTotal = detail.detail.reduce((sizeSum, sizeDetail) => sizeSum + sizeDetail.quantity * (detail.product.wholeSalePrice / 100), 0);
       return totalSum + productTotal;
     }, 0);
   };

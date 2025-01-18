@@ -40,7 +40,7 @@ export const InvoicePDF: React.FC<{
       return (
         total +
         detail.detail.reduce((subTotal, size) => {
-          return subTotal + size.quantity * size.price;
+          return subTotal + size.quantity * detail.product.wholeSalePrice;
         }, 0)
       );
     }, 0) / 100; // Convert cents to dollars
@@ -82,7 +82,7 @@ export const InvoicePDF: React.FC<{
                 ${((itemOrder.detail.length > 11 ? itemOrder.product.wholeSalePrice : itemOrder.product.retailPrice) / 100).toFixed(2)}
               </Text>
               <Text style={invoiceStyle.tableCell}>
-                ${(itemOrder.detail.reduce((subTotal, det) => subTotal + det.price * det.quantity, 0) / 100).toFixed(2)}
+                ${(itemOrder.detail.reduce((subTotal, det) => subTotal + itemOrder.product.wholeSalePrice * det.quantity, 0) / 100).toFixed(2)}
               </Text>
             </View>
           ))}

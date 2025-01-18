@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Select, NumberInput, Flex, Image, Loader, CloseButton, Combobox, TextInput, useCombobox, Textarea } from "@mantine/core";
+import {
+  Button,
+  Table,
+  Select,
+  NumberInput,
+  Flex,
+  Image,
+  Loader,
+  CloseButton,
+  Combobox,
+  TextInput,
+  useCombobox,
+  Textarea,
+  Accordion,
+  Group,
+  Avatar,
+  Text,
+} from "@mantine/core";
 import { useQuery } from "@apollo/client";
 import { Category, Product, ProductDetail } from "../../../shared/core/interfaces";
 import { DetailConjuntoOrderInterface } from "./detail-conjunto-order.interface";
@@ -112,6 +129,16 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
     });
   };
 
+  const removeProduct = (productIndex: number) => {
+    setDetails((prevDetails) => {
+      // Filter out the product by its index
+      const updatedDetails = prevDetails.filter((_, index) => index !== productIndex);
+
+      onDetailChange(updatedDetails); // Notify parent of changes
+      return updatedDetails;
+    });
+  };
+
   if (loadingProducts || loadingCategories) return <Loader />;
 
   return (
@@ -189,7 +216,7 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
             <Flex key={index} gap="md" mt="md" align="flex-end">
               <Select
                 label="Tamaño"
-                data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
+                data={["2", "4", "6", "8", "10", "12", "14", "16", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"]}
                 value={detail.name as string}
                 onChange={(value) => handleSizeChange(index, "name", value as string)}
               />
@@ -216,41 +243,76 @@ export const DetailOrderConjunto: React.FC<OrderConjuntoProps> = ({ onDetailChan
           </Flex>
         </div>
       )}
-      <Table mt="md" highlightOnHover>
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th style={{ textAlign: "left" }}>Nombre</th>
-            <th style={{ textAlign: "left" }}>SKU</th>
-            <th style={{ textAlign: "center" }}>Tamaño</th>
-            <th>Cantidad</th>
-            <th style={{ textAlign: "left" }}>Precio</th>
-            <th style={{ textAlign: "left" }}>Sub-total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {details.map((detail, productIndex) =>
-            detail.detail.map((sizeDetail, sizeIndex) => (
-              <tr key={`${productIndex}-${sizeIndex}`}>
-                <td>
-                  <Image src={detail.product.image as string} style={{ objectFit: "contain" }} width={50} height={50} alt={detail.product.name} />
-                </td>
-                <td>{detail.product.name}</td>
-                <td>{detail.product.SKU}</td>
-                <td style={{ textAlign: "center" }}>{sizeDetail.name}</td>
-                <td style={{ textAlign: "center" }}>{sizeDetail.quantity}</td>
-                <td>${(detail.product.wholeSalePrice / 100).toFixed(2)}</td>
-                <td>${(sizeDetail.quantity * (detail.product.wholeSalePrice / 100)).toFixed(2)}</td>
-                <td style={{ textAlign: "center" }}>
-                  <Button variant="outline" color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
-                    <FaRegTrashAlt size={14} />
-                  </Button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </Table>
+
+      <Text mt={50} size="lg" fw={700}>
+        Productos agregados a la orden
+      </Text>
+
+      <Accordion mt={5}>
+        {details.map((detail, productIndex) => {
+          const { product, note, detail: sizeDetails } = detail;
+          const { SKU, image, wholeSalePrice } = product;
+
+          // Generate unique key and value
+          const accordionKey = `${SKU}${productIndex}`;
+
+          // Calculate subtotal
+          const subTotal = (sizeDetails.reduce((total, det) => total + wholeSalePrice * det.quantity, 0) / 100).toFixed(2);
+
+          return (
+            <Accordion.Item value={accordionKey} key={accordionKey}>
+              <Accordion.Control>
+                <Group wrap="nowrap">
+                  <Avatar src={image?.toString()} radius="xl" size="lg" />
+                  <div>
+                    <Text>SKU: {product.SKU}</Text>
+                    <Text>Sub-total: ${subTotal}</Text>
+                    <Text size="sm" color="dimmed" fw={400}>
+                      Nota: {note}
+                    </Text>
+                  </div>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                {/* BOTON PARA ELIMINAR TODAS LAS TALLAS TODO EL PRODUCTO DE LA ORDEN */}
+                <Button variant="outline" color="red" onClick={() => removeProduct(productIndex)} mt="md">
+                  <Flex gap={10} align="center">
+                    <FaRegTrashAlt size={14} /> <Text>Remover todas las tallas</Text>
+                  </Flex>
+                </Button>
+
+                {/* TABLA DE TALLAS */}
+
+                <Table mt="md" highlightOnHover>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: "center" }}>Tamaño</th>
+                      <th>Cantidad</th>
+                      <th style={{ textAlign: "left" }}>Precio</th>
+                      <th style={{ textAlign: "left" }}>Sub-total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detail.detail.map((sizeDetail, sizeIndex) => (
+                      <tr key={`${productIndex}-${sizeIndex}`}>
+                        <td style={{ textAlign: "center" }}>{sizeDetail.name}</td>
+                        <td style={{ textAlign: "center" }}>{sizeDetail.quantity}</td>
+                        <td>${(detail.product.wholeSalePrice / 100).toFixed(2)}</td>
+                        <td>${(sizeDetail.quantity * (detail.product.wholeSalePrice / 100)).toFixed(2)}</td>
+                        <td style={{ textAlign: "center" }}>
+                          <Button variant="outline" color="red" onClick={() => removeDetail(productIndex, sizeIndex)}>
+                            <FaRegTrashAlt size={14} />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Accordion.Panel>
+            </Accordion.Item>
+          );
+        })}
+      </Accordion>
     </div>
   );
 };
