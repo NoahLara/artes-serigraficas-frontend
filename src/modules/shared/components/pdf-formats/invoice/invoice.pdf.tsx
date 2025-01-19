@@ -49,7 +49,7 @@ export const InvoicePDF: React.FC<{
 
   return (
     <Document>
-      <Page size="C5" style={invoiceStyle.page}>
+      <Page size="LETTER" style={invoiceStyle.page}>
         {/* Header */}
         <View style={invoiceStyle.header}>
           <View>
