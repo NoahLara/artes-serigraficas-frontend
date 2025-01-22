@@ -160,7 +160,7 @@ export const InvoicePDF: React.FC<{
               <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}>Restante a Pagar:</Text>
-              <Text style={invoiceStyle.tableCell}>${pendingAmount.toFixed(2)}</Text>
+              <Text style={invoiceStyle.tableCellTOTALRESTANTE}>${pendingAmount.toFixed(2)}</Text>
             </View>
           </View>
 

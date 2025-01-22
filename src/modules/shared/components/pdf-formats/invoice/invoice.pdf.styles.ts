@@ -98,6 +98,12 @@ export const invoiceStyle = StyleSheet.create({
     flex: 1,
     textAlign: "center",
   },
+  tableCellTOTALRESTANTE: {
+    backgroundColor: "#92d053",
+    fontSize: 9,
+    flex: 1,
+    textAlign: "center",
+  },
   tableCellDescription: {
     flex: 2,
     textAlign: "left",

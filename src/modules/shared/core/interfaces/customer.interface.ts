@@ -1,5 +1,5 @@
 export interface Customer {
   customerName: string;
   customerPhone: string;
-  applyIVA: boolean | null;
+  applyIVA: boolean | undefined;
 }

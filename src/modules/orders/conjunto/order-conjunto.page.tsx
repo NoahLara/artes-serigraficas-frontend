@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useState, useEffect } from "react";
 import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex, Modal, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MdAssignmentAdd } from "react-icons/md";
@@ -23,7 +23,7 @@ export const OrderConjunto = () => {
       customer: {
         customerName: "",
         customerPhone: "",
-        applyIVA: null,
+        applyIVA: undefined,
       },
       payment: {
         advancePayment: 0.0,
@@ -85,17 +85,30 @@ export const OrderConjunto = () => {
     openPDFModal();
   };
 
-  const getTotal = (details: DetailConjuntoOrderInterface[]) => {
-    return details.reduce((totalSum, detail) => {
+  const getTotal = (details: DetailConjuntoOrderInterface[], applyIVA: boolean | null) => {
+    let totalAmount = details.reduce((totalSum, detail) => {
       const productTotal = detail.detail.reduce((sizeSum, sizeDetail) => sizeSum + sizeDetail.quantity * (detail.product.wholeSalePrice / 100), 0);
       return totalSum + productTotal;
     }, 0);
+
+    // If IVA is applied, calculate IVA and add to total
+    if (applyIVA) {
+      const iva = totalAmount * 0.13;
+      totalAmount += iva;
+    }
+
+    return totalAmount;
   };
 
   const handleDetailChange = (updatedDetails: DetailConjuntoOrderInterface[]) => {
     setDetailOrder(updatedDetails);
-    setTotal(getTotal(updatedDetails)); // Recalculate total
+    setTotal(getTotal(updatedDetails, form.getValues().customer.applyIVA ?? false)); // Recalculate total with IVA
   };
+
+  // Recalculate total whenever applyIVA changes
+  useEffect(() => {
+    setTotal(getTotal(detailOrder, form.getValues().customer.applyIVA ?? false));
+  }, [form.values.customer.applyIVA, detailOrder]);
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -115,7 +128,11 @@ export const OrderConjunto = () => {
           />
           <TextInput flex={1} label="Teléfono del Cliente" placeholder="9999-9999" withAsterisk {...form.getInputProps("customer.customerPhone")} />
         </Flex>
-        <Switch label="¿Cliente aplica a IVA?" {...form.getInputProps("customer.applyIVA")} />
+        <Switch
+          label="¿Cliente aplica a IVA?"
+          checked={form.values.customer.applyIVA}
+          onChange={(e) => form.setFieldValue("customer.applyIVA", e.currentTarget.checked)}
+        />
 
         {/* ORDER DETAIL */}
         <Divider my="sm" />
