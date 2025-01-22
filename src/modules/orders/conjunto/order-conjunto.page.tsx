@@ -74,7 +74,7 @@ export const OrderConjunto = () => {
       />
     );
 
-    const pdfInvoice = <InvoicePDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} />;
+    const pdfInvoice = <InvoicePDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />;
 
     // Save the PDF document in the state for rendering
     setPdfOrderData(pdfDocument);
