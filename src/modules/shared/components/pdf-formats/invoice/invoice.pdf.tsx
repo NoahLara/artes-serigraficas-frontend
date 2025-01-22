@@ -35,6 +35,7 @@ export const InvoicePDF: React.FC<{
     invoiceID: generateRandomID(),
   };
 
+  // Total amount for all products
   const totalAmount =
     detailOrder.reduce((total, detail) => {
       return (
@@ -45,7 +46,13 @@ export const InvoicePDF: React.FC<{
       );
     }, 0) / 100;
 
+  // Pending amount after subtracting the payment in advance
   const pendingAmount = totalAmount - paymentInAdvance;
+
+  // Calculate total quantity
+  const totalQuantity = detailOrder.reduce((totalQty, detail) => {
+    return totalQty + detail.detail.reduce((qty, size) => qty + size.quantity, 0);
+  }, 0);
 
   return (
     <Document>
@@ -83,29 +90,31 @@ export const InvoicePDF: React.FC<{
             <View style={invoiceStyle.tableRowHeader}>
               <Text style={invoiceStyle.tableCell}>SKU</Text>
               <Text style={invoiceStyle.tableCellDescription}>DETALLE</Text>
-              <Text style={invoiceStyle.tableCell}>CANTIDAD</Text>
               <Text style={invoiceStyle.tableCell}>PRECIO</Text>
+              <Text style={invoiceStyle.tableCell}>CANTIDAD</Text>
               <Text style={invoiceStyle.tableCell}>IMPORTE</Text>
             </View>
             {detailOrder.map((itemOrder, index) => (
               <View style={invoiceStyle.tableRow} key={index}>
                 <Text style={invoiceStyle.tableCell}>{itemOrder.product.SKU}</Text>
                 <Text style={invoiceStyle.tableCellDescription}>{itemOrder.product.name}</Text>
-                <Text style={invoiceStyle.tableCell}>{itemOrder.detail.reduce((totalQuantity, det) => totalQuantity + det.quantity, 0)}</Text>
                 <Text style={invoiceStyle.tableCell}>${(itemOrder.product.wholeSalePrice / 100).toFixed(2)}</Text>
+                <Text style={invoiceStyle.tableCell}>{itemOrder.detail.reduce((totalQuantity, det) => totalQuantity + det.quantity, 0)}</Text>
                 <Text style={invoiceStyle.tableCell}>
                   ${itemOrder.detail.reduce((subTotal, det) => subTotal + (itemOrder.product.wholeSalePrice * det.quantity) / 100, 0).toFixed(2)}
                 </Text>
               </View>
             ))}
+            {/* Total Quantity and Total Amount Alignment */}
             <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
-              <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}>Total</Text>
+              <Text style={invoiceStyle.tableCell}>{totalQuantity}</Text>
               <Text style={invoiceStyle.tableCell}>${totalAmount.toFixed(2)}</Text>
             </View>
 
+            {/* Payment in advance */}
             <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
@@ -114,6 +123,7 @@ export const InvoicePDF: React.FC<{
               <Text style={invoiceStyle.tableCell}>${paymentInAdvance.toFixed(2)}</Text>
             </View>
 
+            {/* Pending amount */}
             <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
