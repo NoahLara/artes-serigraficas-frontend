@@ -7,7 +7,7 @@ export const invoiceStyle = StyleSheet.create({
   },
   border: {
     border: "1px solid black",
-    padding: 20,
+    padding: 5,
     borderRadius: 2,
   },
   headerTable: {
@@ -49,6 +49,14 @@ export const invoiceStyle = StyleSheet.create({
     padding: 8,
     border: "2px solid black",
     borderRadius: 2,
+  },
+
+  customerInfoRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 5,
+    borderBottom: "1px solid black",
   },
 
   table: {

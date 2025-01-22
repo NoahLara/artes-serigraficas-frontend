@@ -5,28 +5,6 @@ import { logoBase64 } from "./logo.base64";
 import dayjs from "dayjs";
 import { DetailConjuntoOrderInterface } from "../../../../orders/conjunto/components/detail-conjunto-order.interface";
 import { Customer } from "../../../core/interfaces";
-// FOR MULTIPLE PRODUCTS RENDERIN
-// const generateDummyProducts = () => {
-//   const dummyProducts = [];
-//   for (let i = 0; i < 300; i++) {
-//     dummyProducts.push({
-//       product: {
-//         SKU: `SKU${i + 1}`,
-//         name: `Product ${i + 1}`,
-//         wholeSalePrice: 1000, // Price in cents, e.g., $10.00
-//         retailPrice: 1500, // Price in cents, e.g., $15.00
-//       },
-//       detail: [
-//         {
-//           quantity: Math.floor(Math.random() * 10) + 1, // Random quantity between 1 and 10
-//         },
-//       ],
-//     });
-//   }
-//   return dummyProducts;
-// };
-
-// const dummyDetailOrder = generateDummyProducts();
 
 // Utility to generate random ID
 const generateRandomID = () => {
@@ -89,9 +67,13 @@ export const InvoicePDF: React.FC<{
               <View style={invoiceStyle.invoiceIDContainer}>
                 <Text style={invoiceStyle.textInfoCompany}>No Factura: {companyDetails.invoiceID}</Text>
                 <Text style={invoiceStyle.textInfoCompany}>Fecha: {companyDetails.date}</Text>
-                <Text style={invoiceStyle.textInfoCompany}>Cliente: {customer.customerName}</Text>
-                <Text style={invoiceStyle.textInfoCompany}>Teléfono: {customer.customerPhone}</Text>
               </View>
+            </View>
+
+            {/* Customer Information */}
+            <View style={invoiceStyle.customerInfoRow}>
+              <Text style={invoiceStyle.textInfoCompany}>Cliente: {customer.customerName}</Text>
+              <Text style={invoiceStyle.textInfoCompany}>Teléfono: {customer.customerPhone}</Text>
             </View>
           </View>
 
