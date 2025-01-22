@@ -98,7 +98,7 @@ export const InvoicePDF: React.FC<{
                 </Text>
               </View>
             ))}
-            <View style={invoiceStyle.tableRow}>
+            <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
@@ -106,7 +106,7 @@ export const InvoicePDF: React.FC<{
               <Text style={invoiceStyle.tableCell}>${totalAmount.toFixed(2)}</Text>
             </View>
 
-            <View style={invoiceStyle.tableRow}>
+            <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
@@ -114,7 +114,7 @@ export const InvoicePDF: React.FC<{
               <Text style={invoiceStyle.tableCell}>${paymentInAdvance.toFixed(2)}</Text>
             </View>
 
-            <View style={invoiceStyle.tableRow}>
+            <View style={invoiceStyle.tableRowTotals}>
               <Text style={invoiceStyle.tableCellDescription}></Text>
               <Text style={invoiceStyle.tableCell}></Text>
               <Text style={invoiceStyle.tableCell}></Text>

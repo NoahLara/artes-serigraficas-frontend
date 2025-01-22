@@ -85,6 +85,15 @@ export const invoiceStyle = StyleSheet.create({
     borderBottom: "1px solid black",
     paddingVertical: 4,
   },
+  tableRowTotals: {
+    backgroundColor: "#bdd7ee",
+    display: "flex",
+    flexDirection: "row",
+    borderRight: "1px solid black",
+    borderLeft: "1px solid black",
+    borderBottom: "1px solid black",
+    paddingVertical: 4,
+  },
   tableCell: {
     flex: 1,
     textAlign: "center",
