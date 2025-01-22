@@ -1,5 +1,5 @@
 import { ReactElement, useState } from "react";
-import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex, Modal } from "@mantine/core";
+import { TextInput, NumberInput, Button, Select, Stack, Group, Divider, Text, Flex, Modal, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { MdAssignmentAdd } from "react-icons/md";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -23,6 +23,7 @@ export const OrderConjunto = () => {
       customer: {
         customerName: "",
         customerPhone: "",
+        applyIVA: null,
       },
       payment: {
         advancePayment: 0.0,
@@ -38,6 +39,7 @@ export const OrderConjunto = () => {
       customer: {
         customerName: (value) => (value.trim().length === 0 ? "El nombre del cliente es obligatorio" : null),
         customerPhone: (value) => (value.trim().length === 0 ? "El número de teléfono es obligatorio" : null),
+        applyIVA: (value) => (value === null ? "El IVA es obligatorio" : null),
       },
       payment: {
         advancePayment: (value) => (value < 0 ? "El pago adelantado no puede ser negativo" : null),
@@ -103,7 +105,7 @@ export const OrderConjunto = () => {
           Detalles del Cliente
         </Text>
 
-        <Flex gap={5}>
+        <Flex gap={5} align="center">
           <TextInput
             flex={3}
             label="Nombre del Cliente"
@@ -111,9 +113,9 @@ export const OrderConjunto = () => {
             withAsterisk
             {...form.getInputProps("customer.customerName")}
           />
-
           <TextInput flex={1} label="Teléfono del Cliente" placeholder="9999-9999" withAsterisk {...form.getInputProps("customer.customerPhone")} />
         </Flex>
+        <Switch label="¿Cliente aplica a IVA?" {...form.getInputProps("customer.applyIVA")} />
 
         {/* ORDER DETAIL */}
         <Divider my="sm" />
