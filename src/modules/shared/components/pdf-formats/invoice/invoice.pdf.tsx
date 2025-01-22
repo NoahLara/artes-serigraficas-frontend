@@ -72,8 +72,9 @@ export const InvoicePDF: React.FC<{
 
             {/* Customer Information */}
             <View style={invoiceStyle.customerInfoRow}>
-              <Text style={invoiceStyle.textInfoCompany}>Cliente: {customer.customerName}</Text>
-              <Text style={invoiceStyle.textInfoCompany}>Teléfono: {customer.customerPhone}</Text>
+              <Text style={invoiceStyle.textInfoCompany}>
+                Cliente: {customer.customerName} | Teléfono: {customer.customerPhone}
+              </Text>
             </View>
           </View>
 
@@ -91,11 +92,9 @@ export const InvoicePDF: React.FC<{
                 <Text style={invoiceStyle.tableCell}>{itemOrder.product.SKU}</Text>
                 <Text style={invoiceStyle.tableCellDescription}>{itemOrder.product.name}</Text>
                 <Text style={invoiceStyle.tableCell}>{itemOrder.detail.reduce((totalQuantity, det) => totalQuantity + det.quantity, 0)}</Text>
+                <Text style={invoiceStyle.tableCell}>${(itemOrder.product.wholeSalePrice / 100).toFixed(2)}</Text>
                 <Text style={invoiceStyle.tableCell}>
-                  ${((itemOrder.detail.length > 11 ? itemOrder.product.wholeSalePrice : itemOrder.product.retailPrice) / 100).toFixed(2)}
-                </Text>
-                <Text style={invoiceStyle.tableCell}>
-                  ${(itemOrder.detail.reduce((subTotal, det) => subTotal + itemOrder.product.wholeSalePrice * det.quantity, 0) / 100).toFixed(2)}
+                  ${itemOrder.detail.reduce((subTotal, det) => subTotal + (itemOrder.product.wholeSalePrice * det.quantity) / 100, 0).toFixed(2)}
                 </Text>
               </View>
             ))}
