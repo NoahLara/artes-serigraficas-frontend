@@ -11,6 +11,7 @@ import { DatesProvider } from "@mantine/dates";
 import dayjs from "dayjs";
 import "dayjs/locale/es"; // Import Spanish locale
 import { OrderConjunto } from "./modules/orders/conjunto/order-conjunto.page.js";
+import { OrderCamisas } from "./modules/orders/camisas/order-camisas.page.js";
 
 dayjs.locale("es"); // Set Spanish as the default locale
 
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="productos/:category" element={<ProductsPage />} />
 
                 <Route path="pedido/Conjuntos" element={<OrderConjunto />} />
+                <Route path="pedido/Camisas" element={<OrderCamisas />} />
               </Route>
             </Routes>
           </BrowserRouter>
