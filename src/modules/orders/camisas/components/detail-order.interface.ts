@@ -1,7 +1,7 @@
-import { ProductDetail } from "../../../shared/core/interfaces";
+// import { ProductDetail } from "../../../shared/core/interfaces";
 
-export interface DetailCamisasOrderInterface {
-  price: number;
-  detail: ProductDetail[];
-  note: string;
-}
+// export interface DetailCamisasOrderInterface {
+//   price: number;
+//   detail: ProductDetail[];
+//   note: string;
+// }
