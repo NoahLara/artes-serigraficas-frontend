@@ -1,7 +1,7 @@
-import { ProductSize } from "./product-size.interface";
+import { ProductDetail } from "./product-size.interface";
 
 export interface ProductByPerson {
-  Hombre: ProductSize[];
-  Mujer: ProductSize[];
-  Niño: ProductSize[];
+  Hombre: ProductDetail[];
+  Mujer: ProductDetail[];
+  Niño: ProductDetail[];
 }
