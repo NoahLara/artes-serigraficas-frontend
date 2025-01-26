@@ -1,4 +1,3 @@
-import React from "react";
 import { Document, Page, Text, Image, View } from "@react-pdf/renderer";
 import { DetailConjuntoOrderInterface } from "../../../../orders/conjunto/components/detail-conjunto-order.interface";
 import { Customer } from "../../../core/interfaces";
