@@ -4,7 +4,7 @@ import { useForm } from "@mantine/form";
 import { MdAssignmentAdd } from "react-icons/md";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import dayjs from "dayjs";
-import { OrderConjuntoInterface } from "./order-conjunto.interface";
+import { OrderGeneralDetails } from "../../shared/core/interfaces/order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
 import { DetailOrderConjunto } from "./components/detail-conjunto-order.component";
 import { DateTimePicker } from "@mantine/dates";
@@ -16,7 +16,7 @@ import { InvoicePDF } from "../../shared/components/pdf-formats/invoice/invoice.
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
-  const form = useForm<OrderConjuntoInterface>({
+  const form = useForm<OrderGeneralDetails>({
     initialValues: {
       date: new Date(),
       madeDate: new Date(),
@@ -59,7 +59,7 @@ export const OrderConjunto = () => {
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
     // FOR FACTURA
-    const formattedValues: OrderConjuntoInterface = {
+    const formattedValues: OrderGeneralDetails = {
       ...values,
       madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
       date: dayjs(values.date).format("dddd DD MMMM YYYY hh:mm A"),
