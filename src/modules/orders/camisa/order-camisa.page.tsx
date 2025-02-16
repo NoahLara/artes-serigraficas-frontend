@@ -5,6 +5,7 @@ import { useForm } from "@mantine/form";
 import { DocumentProps } from "postcss";
 import { useDisclosure } from "@mantine/hooks";
 import { DetailCamisaOrderInterface } from "./components/detail-camisa-order.components.tsx/detail-camisa-order.interface";
+import DetailCamisaOrderComponent from "./components/detail-camisa-order.components.tsx/detail-camisa-order.component";
 
 export const OrderCamisa: React.FC = () => {
   const form = useForm<OrderGeneralDetails>({
@@ -41,11 +42,16 @@ export const OrderCamisa: React.FC = () => {
     },
   });
 
-  const [detailOrder, setDetailOrder] = useState<DetailCamisaOrderInterface[]>([]);
+  const [detailOrder, setDetailOrder] = useState<DetailCamisaOrderInterface>({});
   const [total, setTotal] = useState<number>(0);
   const [pdfOrderData, setPdfOrderData] = useState<ReactElement<DocumentProps> | null>(null);
   const [pdfInvoiceData, setPdfInvoiceData] = useState<ReactElement<DocumentProps> | null>(null);
   const [openedPDFModal, { open: openPDFModal, close: closePDFModal }] = useDisclosure(false);
 
-  return <Title order={4}>Pedido de Camisa Personalizada</Title>;
+  return (
+    <>
+      <Title order={4}>Pedido de Camisa Personalizada</Title>
+      <DetailCamisaOrderComponent />
+    </>
+  );
 };

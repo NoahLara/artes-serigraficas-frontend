@@ -5,7 +5,7 @@ import { VscError } from "react-icons/vsc";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_PRODUCT } from "../../../../../../graphql/queries/createProduct.query";
-import { PreviewImageNewProduct } from "../preview-image-new-product/preview-image-new-product.component";
+import { PreviewImageNewProduct } from "../../../../../shared/components/preview-image-new-product/preview-image-new-product.component";
 import { Category } from "../../../../../shared/core/interfaces";
 import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
 import { useParams } from "react-router-dom";

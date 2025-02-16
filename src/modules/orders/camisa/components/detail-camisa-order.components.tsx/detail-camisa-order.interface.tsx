@@ -7,7 +7,7 @@ export type FabricType = "Algodón" | "Poliéster" | "Licra" | "P. Durazno" | "O
 export type FabricWeight = 170 | 180 | 190 | 200;
 export type TechniqueType = "Serigrafía" | "Vinil" | "Sublimación" | "Bordado" | "Otro";
 export type StampingOptions = "Manga Derecha" | "Manga Izquierda" | "Pecho" | "Espalda";
-export type ShirtFit = "Regular" | "Large Fit" | "Oversized" | "Otro";
+export type ShirtFit = "Regular" | "Agrandada" | "Oversized" | "Otro";
 
 // Interface for Shirt Order
 export interface ShirtOrder {

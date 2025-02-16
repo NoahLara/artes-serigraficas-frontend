@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Box, Button, Group, Image } from "@mantine/core";
 import { FaImage } from "react-icons/fa";
 import * as S from "./preview-image-new-product.styles";
-import { toBase64 } from "../../../../../shared/util";
+import { toBase64 } from "../../util";
 
 interface CustomImageInputProps {
   value: string | ArrayBuffer | null;
