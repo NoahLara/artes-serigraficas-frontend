@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "@mantine/form";
 import { Grid, RadioGroup, Radio, Checkbox, Textarea, Flex, Alert, Text } from "@mantine/core";
 import {
@@ -13,7 +13,11 @@ import {
 } from "./detail-camisa-order.interface";
 import { PreviewImageNewProduct } from "../../../../shared/components/preview-image-new-product/preview-image-new-product.component";
 
-const DetailCamisaOrderComponent: React.FC = () => {
+interface DetailCamisaOrderProps {
+  onChange: (values: DetailCamisaOrderInterface) => void; // Callback to notify parent
+}
+
+const DetailCamisaOrderComponent: React.FC<DetailCamisaOrderProps> = ({ onChange }) => {
   const form = useForm<DetailCamisaOrderInterface>({
     initialValues: {
       image: "",
@@ -31,6 +35,11 @@ const DetailCamisaOrderComponent: React.FC = () => {
       /* Validation remains unchanged */
     },
   });
+
+  // Trigger the parent callback whenever form values change
+  useEffect(() => {
+    onChange(form.values);
+  }, [form.values, onChange]); // Depend on form.values to detect changes
 
   return (
     <form>
@@ -116,6 +125,7 @@ const DetailCamisaOrderComponent: React.FC = () => {
               <Radio value="Vinil" label="Vinil" />
               <Radio value="Sublimación" label="Sublimación" />
               <Radio value="Bordado" label="Bordado" />
+              <Radio value="DTF" label="DTF" />
               <Radio value="Otro" label="Otro" />
             </Flex>
           </RadioGroup>

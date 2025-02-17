@@ -5,7 +5,7 @@ export type NeckType = "Redondo" | "V" | "Otro";
 export type SleeveType = "Corta" | "Larga" | "3/4" | "Sin manga" | "Otro";
 export type FabricType = "Algodón" | "Poliéster" | "Licra" | "P. Durazno" | "Otro";
 export type FabricWeight = 170 | 180 | 190 | 200;
-export type TechniqueType = "Serigrafía" | "Vinil" | "Sublimación" | "Bordado" | "Otro";
+export type TechniqueType = "Serigrafía" | "Vinil" | "Sublimación" | "Bordado" | "DTF" | "Otro";
 export type StampingOptions = "Manga Derecha" | "Manga Izquierda" | "Pecho" | "Espalda";
 export type ShirtFit = "Regular" | "Agrandada" | "Oversized" | "Otro";
 

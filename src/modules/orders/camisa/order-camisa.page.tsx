@@ -48,10 +48,15 @@ export const OrderCamisa: React.FC = () => {
   const [pdfInvoiceData, setPdfInvoiceData] = useState<ReactElement<DocumentProps> | null>(null);
   const [openedPDFModal, { open: openPDFModal, close: closePDFModal }] = useDisclosure(false);
 
+  const handleFormChange = (values: DetailCamisaOrderInterface) => {
+    console.log("Form updated:", values);
+  };
+  
+
   return (
     <>
       <Title order={4}>Pedido de Camisa Personalizada</Title>
-      <DetailCamisaOrderComponent />
+      <DetailCamisaOrderComponent onChange={handleFormChange} />
     </>
   );
 };
