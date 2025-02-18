@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
-import { Grid, RadioGroup, Radio, Checkbox, Textarea, Flex, Alert, Text, Select, NumberInput, Button, Table, ActionIcon } from "@mantine/core";
+import { Grid, RadioGroup, Radio, Checkbox, Textarea, Flex, Alert, Text, Select, NumberInput, Button, Table, ActionIcon, Stack } from "@mantine/core";
 import {
   DetailCamisaOrderInterface,
   FabricType,
@@ -14,7 +14,6 @@ import {
 } from "./detail-camisa-order.interface";
 import { PreviewImageNewProduct } from "../../../../shared/components/preview-image-new-product/preview-image-new-product.component";
 import { AdultSize, ChildSize } from "../../../../shared/core/interfaces";
-import { FaEdit } from "react-icons/fa";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 interface DetailCamisaOrderProps {
@@ -51,27 +50,30 @@ const DetailCamisaOrderComponent: React.FC<DetailCamisaOrderProps> = ({ onChange
 
   const handleAddShirt = () => {
     console.log("Adding shirt", size, quantity, price);
+
     if (size === null || quantity <= 0 || price <= 0) {
       return;
     }
-    const newShirt: ShirtOrder = {
-      size: size as AdultSize | ChildSize,
-      quantity,
-      price,
-    };
-    form.setFieldValue("shirts", [...form.values.shirts, newShirt]);
-    resetFormSizes();
-  };
 
-  const handleEdit = (shirt: ShirtOrder) => {
-    console.log("Editing shirt", shirt);
-    setSize(shirt.size as AdultSize | ChildSize);
-    setQuantity(shirt.quantity);
-    setPrice(shirt.price);
-    form.setFieldValue(
-      "shirts",
-      form.values.shirts.filter((s) => s.size !== shirt.size)
-    );
+    form.setFieldValue("shirts", (prevShirts: ShirtOrder[]) => {
+      const existingIndex = prevShirts.findIndex((shirt) => shirt.size === size);
+
+      if (existingIndex !== -1) {
+        // Update the existing size entry
+        const updatedShirts = [...prevShirts];
+        updatedShirts[existingIndex] = {
+          ...updatedShirts[existingIndex],
+          quantity: updatedShirts[existingIndex].quantity + quantity,
+          price, // Update to the new price
+        };
+        return updatedShirts;
+      }
+
+      // Add new shirt entry if size doesn't exist
+      return [...prevShirts, { size, quantity, price }];
+    });
+
+    resetFormSizes();
   };
 
   const handleDelete = (size: AdultSize | ChildSize) => {
@@ -102,71 +104,83 @@ const DetailCamisaOrderComponent: React.FC<DetailCamisaOrderProps> = ({ onChange
       </Flex>
 
       {/* TABLE */}
-      <div>
-        <Grid>
-          <Grid.Col span={4}>
-            <Select
-              label="Talla"
-              data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
-              value={size as string}
-              onChange={(value) => setSize(value as AdultSize | ChildSize)}
-              error={size === null ? "Seleccione una talla" : null}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <NumberInput
-              label="Cantidad"
-              min={1}
-              decimalScale={0}
-              value={quantity}
-              onChange={(value) => setQuantity(value as number)}
-              error={quantity <= 0 ? "Cantidad debe ser mayor a 0" : null}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <NumberInput
-              label="Precio"
-              min={1}
-              value={price}
-              decimalScale={2}
-              onChange={(value) => setPrice(value as number)}
-              error={price <= 0 ? "Precio debe ser mayor a 0" : null}
-            />
-          </Grid.Col>
-        </Grid>
-        <Button mt={10} fullWidth onClick={handleAddShirt}>
-          Agregar Camisa
-        </Button>
-        <Table mt={20} striped highlightOnHover>
-          <thead>
-            <tr>
-              <th>Talla</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {form.values.shirts.map((shirt) => (
-              <tr key={shirt.size}>
-                <td>{shirt.size}</td>
-                <td>{shirt.quantity}</td>
-                <td>${shirt.price}</td>
-                <td>
-                  <Flex gap="sm">
-                    <ActionIcon color="blue" onClick={() => handleEdit(shirt)}>
-                      <FaEdit size={16} />
-                    </ActionIcon>
-                    <ActionIcon color="red" onClick={() => handleDelete(shirt.size)}>
-                      <FaRegTrashAlt size={16} />
-                    </ActionIcon>
-                  </Flex>
-                </td>
+      <Flex justify="space-between" align="flex-start" mt={20}>
+        <Stack miw="300" maw="300">
+          <Grid>
+            <Grid.Col span={4}>
+              <Select
+                label="Talla"
+                data={["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "2", "4", "6", "8", "10", "12", "14", "16"]}
+                value={size as string}
+                onChange={(value) => setSize(value as AdultSize | ChildSize)}
+                error={size === null ? "Seleccione una talla" : null}
+              />
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <NumberInput
+                label="Cantidad"
+                min={1}
+                decimalScale={0}
+                value={quantity}
+                onChange={(value) => setQuantity(value as number)}
+                error={quantity <= 0 ? "Cantidad debe ser mayor a 0" : null}
+              />
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <NumberInput
+                label="Precio"
+                min={1}
+                value={price}
+                decimalScale={2}
+                onChange={(value) => setPrice(value as number)}
+                error={price <= 0 ? "Precio debe ser mayor a 0" : null}
+              />
+            </Grid.Col>
+          </Grid>
+          <Button mt={10} fullWidth onClick={handleAddShirt}>
+            Agregar Camisas
+          </Button>
+        </Stack>
+
+        {form.values.shirts.length > 0 && (
+          <Table striped highlightOnHover>
+            <thead>
+              <tr>
+                <th>Talla</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Sub-total</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+            </thead>
+
+            <tbody>
+              {form.values.shirts.map((shirt) => (
+                <tr key={shirt.size}>
+                  <td style={{ textAlign: "center" }}>{shirt.size}</td>
+                  <td style={{ textAlign: "center" }}> {shirt.quantity}</td>
+                  <td style={{ textAlign: "center" }}>${shirt.price.toFixed(2)}</td>
+                  <td style={{ textAlign: "center" }}>${(shirt.price * shirt.quantity).toFixed(2)}</td>
+                  <td>
+                    <Flex gap="sm" justify="center">
+                      <ActionIcon color="red" onClick={() => handleDelete(shirt.size)}>
+                        <FaRegTrashAlt size={16} />
+                      </ActionIcon>
+                    </Flex>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+
+        {form.values.shirts.length === 0 && (
+          <Text size="xl" fw={400} ta="center" my={50}>
+            Ninguna talla de camisa agregada
+          </Text>
+        )}
+      </Flex>
+
       {/* END TABLE */}
 
       {/* Radio Groups inside a 3-column Grid */}
