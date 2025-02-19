@@ -1,51 +1,49 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
-export const orderStyles = StyleSheet.create({
+// Styles for the PDF document
+export const stylesSheet = StyleSheet.create({
   page: {
     padding: 50,
     fontSize: 12,
     fontFamily: "Helvetica",
+    backgroundColor: "#f9f9f9",
   },
-  text: {
-    marginBottom: 4,
-  },
-  column: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
-  text_bold: {
-    fontWeight: 800,
-  },
-
   header: {
     fontWeight: 800,
     marginBottom: 20,
     textAlign: "center",
-    textTransform: "uppercase",
+    fontSize: 14,
+    color: "#333",
   },
-
+  text: {
+    marginBottom: 4,
+    fontSize: 10,
+  },
+  text_bold: {
+    fontWeight: "bold",
+    fontSize: 10,
+  },
   product_information: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "flex-start",
     borderBottom: "1px solid #000",
+    paddingBottom: 10,
+    marginBottom: 10,
   },
-
   image_container: {
-    flexGrow: 0,
+    width: "30%",
+    textAlign: "center",
   },
   product_image: {
-    width: "150px",
-    height: "125px",
+    width: "100%",
+    height: "auto",
+    objectFit: "contain",
+    borderRadius: 5,
   },
-
-  info_container: {
-    flexGrow: 1,
-  },
-
   table: {
-    fontSize: "8px",
+    fontSize: "10px",
     display: "flex",
     width: "100%",
     borderStyle: "solid",
@@ -66,5 +64,14 @@ export const orderStyles = StyleSheet.create({
     padding: 5,
     flex: 1,
     textAlign: "center",
+  },
+  detailContainer: {
+    width: "60%",
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 5,
+    textDecoration: "underline",
   },
 });
