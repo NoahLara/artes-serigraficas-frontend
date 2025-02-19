@@ -1,10 +1,10 @@
 import React from "react";
 import { Document, Page, Text, View, Image } from "@react-pdf/renderer";
-import { invoiceStyle } from "./invoice.pdf.styles";
+import { invoiceStyle } from "./invoice-conjunto.pdf.styles";
 import { logoBase64 } from "./logo.base64";
 import dayjs from "dayjs";
-import { DetailConjuntoOrderInterface } from "../../../../orders/conjunto/components/detail-conjunto-order.interface";
-import { Customer } from "../../../core/interfaces";
+import { DetailConjuntoOrderInterface } from "../../../../../orders/conjunto/components/detail-conjunto-order.interface";
+import { Customer } from "../../../../core/interfaces";
 
 // Utility to generate random ID
 const generateRandomID = () => {
@@ -21,7 +21,7 @@ const generateRandomID = () => {
   return id.toUpperCase();
 };
 
-export const InvoicePDF: React.FC<{
+export const InvoiceConjuntoPDF: React.FC<{
   detailOrder: DetailConjuntoOrderInterface[];
   paymentInAdvance: number;
   customer: Customer;

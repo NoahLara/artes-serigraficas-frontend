@@ -12,7 +12,7 @@ import { DocumentProps, pdf } from "@react-pdf/renderer";
 import { OrderConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/order-conjunto.pdf";
 import { useDisclosure } from "@mantine/hooks";
 import * as S from "./order-conjunto.styles";
-import { InvoicePDF } from "../../shared/components/pdf-formats/invoice/invoice.pdf";
+import { InvoiceConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/invoice/invoice-conjunto.pdf";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
@@ -76,7 +76,9 @@ export const OrderConjunto = () => {
       />
     );
 
-    const pdfInvoice = <InvoicePDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />;
+    const pdfInvoice = (
+      <InvoiceConjuntoPDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />
+    );
 
     // Save the PDF document in the state for rendering
     setPdfOrderData(pdfDocument);

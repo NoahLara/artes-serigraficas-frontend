@@ -1,12 +1,18 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import { Divider, Flex, Stack, Text, TextInput, Title, Switch, NumberInput, Select, Group, Button } from "@mantine/core";
+import { Divider, Flex, Stack, Text, TextInput, Title, Switch, NumberInput, Select, Group, Button, Modal } from "@mantine/core";
 import { OrderGeneralDetails } from "../../shared/core/interfaces/order-conjunto.interface";
 import { useForm } from "@mantine/form";
-import { DocumentProps } from "postcss";
 import { useDisclosure } from "@mantine/hooks";
 import { DetailCamisaOrderInterface } from "./components/detail-camisa-order.components.tsx/detail-camisa-order.interface";
 import DetailCamisaOrderComponent from "./components/detail-camisa-order.components.tsx/detail-camisa-order.component";
 import { DateTimePicker } from "@mantine/dates";
+import { MdAssignmentAdd } from "react-icons/md";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { DocumentProps, pdf } from "@react-pdf/renderer";
+import * as S from "./order-camisa.styles";
+import dayjs from "dayjs";
+import { OrderCamisaPDF } from "../../shared/components/pdf-formats/order-camisa/order-camisa.pdf";
+import { InvoiceCamisaPDF } from "../../shared/components/pdf-formats/order-camisa/invoice/invoice-camisa.pdf";
 
 export const OrderCamisa: React.FC = () => {
   const form = useForm<OrderGeneralDetails>({
@@ -79,27 +85,29 @@ export const OrderCamisa: React.FC = () => {
   }, [form, form.values.customer.applyIVA, detailOrder]);
 
   const handleSubmit = (values: typeof form.values) => {
-    // // FOR FACTURA
-    // const formattedValues: OrderGeneralDetails = {
-    //   ...values,
-    //   madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
-    //   date: dayjs(values.date).format("dddd DD MMMM YYYY hh:mm A"),
-    // };
-    // console.log("Order Form Submitted:", formattedValues);
-    // console.log("Detail Order:", detailOrder);
-    // const pdfDocument = (
-    //   <OrderConjuntoPDF
-    //     detailOrder={detailOrder}
-    //     customer={form.getValues().customer}
-    //     deliveryDate={dayjs(form.getValues().date).format("dddd DD MMMM YYYY hh:mm A")}
-    //   />
-    // );
-    // const pdfInvoice = <InvoicePDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />;
-    // // Save the PDF document in the state for rendering
-    // setPdfOrderData(pdfDocument);
-    // // Save the PDF Invoice document in the state for rendering
-    // setPdfInvoiceData(pdfInvoice);
-    // openPDFModal();
+    // FOR FACTURA
+    const formattedValues: OrderGeneralDetails = {
+      ...values,
+      madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
+      date: dayjs(values.date).format("dddd DD MMMM YYYY hh:mm A"),
+    };
+    console.log("Order Form Submitted:", formattedValues);
+    console.log("Detail Order:", detailOrder);
+    const pdfDocument = (
+      <OrderCamisaPDF
+        detailOrder={detailOrder}
+        customer={form.getValues().customer}
+        deliveryDate={dayjs(form.getValues().date).format("dddd DD MMMM YYYY hh:mm A")}
+      />
+    );
+    const pdfInvoice = (
+      <InvoiceCamisaPDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />
+    );
+    // Save the PDF document in the state for rendering
+    setPdfOrderData(pdfDocument);
+    // Save the PDF Invoice document in the state for rendering
+    setPdfInvoiceData(pdfInvoice);
+    openPDFModal();
   };
 
   return (
@@ -200,6 +208,49 @@ export const OrderCamisa: React.FC = () => {
             <Group mt="md">{detailOrder.shirts.length > 0 && <Button type="submit">Generar Pedido</Button>}</Group>
           </Stack>
         </form>
+
+        {/* MODAL */}
+        <Modal opened={openedPDFModal} onClose={closePDFModal} title="Hojas de Pedido">
+          {/* HOJA PEDIDO */}
+          {pdfOrderData && (
+            <S.ModalContainer>
+              {/* HOJA DE PEDIDO */}
+              <S.CardPDF
+                onClick={async () => {
+                  // Ensure pdfOrderData is not null
+                  if (pdfOrderData) {
+                    // Generate the PDF as a Blob
+                    const blob = await pdf(pdfOrderData).toBlob();
+
+                    // Create a URL for the Blob and open it in a new tab
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, "_blank");
+                  }
+                }}
+              >
+                <MdAssignmentAdd className="iconPdf" />
+                <span>Hoja de Pedido</span>
+              </S.CardPDF>
+
+              <S.CardPDF
+                onClick={async () => {
+                  // Ensure pdfOrderData is not null
+                  if (pdfInvoiceData) {
+                    // Generate the PDF as a Blob
+                    const blob = await pdf(pdfInvoiceData).toBlob();
+
+                    // Create a URL for the Blob and open it in a new tab
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, "_blank");
+                  }
+                }}
+              >
+                <FaFileInvoiceDollar className="iconPdf" />
+                <span>Factura</span>
+              </S.CardPDF>
+            </S.ModalContainer>
+          )}
+        </Modal>
       </Stack>
     </>
   );
