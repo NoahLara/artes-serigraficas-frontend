@@ -5,12 +5,12 @@ import * as S from "./preview-image-new-product.styles";
 import { toBase64 } from "../../util";
 
 interface CustomImageInputProps {
-  loading: boolean;
+  loading?: boolean;
   value: string | ArrayBuffer | null;
   onChange: (base64: string | ArrayBuffer | null) => void;
 }
 
-export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({ loading, onChange }) => {
+export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({ loading = false, onChange }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
