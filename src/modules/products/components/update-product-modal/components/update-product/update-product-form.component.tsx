@@ -1,14 +1,5 @@
-import React from "react";
-import {
-  TextInput,
-  NumberInput,
-  Button,
-  Alert,
-  Flex,
-  Text,
-  Loader,
-  Stack,
-} from "@mantine/core";
+import React, { useState } from "react";
+import { TextInput, NumberInput, Button, Alert, Flex, Text, Loader, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
@@ -25,17 +16,14 @@ interface UpdateProductFormProps {
   onClose: () => void;
 }
 
-export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
-  product,
-  onSuccess,
-  onClose,
-}) => {
-  const [updateProduct, { loading: loadingUpdateProduct }] =
-    useMutation(UPDATE_PRODUCT);
+export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onSuccess, onClose }) => {
+  const [updateProduct, { loading: loadingUpdateProduct }] = useMutation(UPDATE_PRODUCT);
 
   const { loading: loadingCategories, error: errorCategories } = useQuery<{
     categories: Category[];
   }>(GET_CATEGORIES);
+
+  const [loading, setLoading] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -48,21 +36,17 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
       categoryId: product.categoryId || "",
     },
     validate: {
-      name: (value) =>
-        value.trim().length === 0 ? "Nombre del producto es obligatorio" : null,
+      name: (value) => (value.trim().length === 0 ? "Nombre del producto es obligatorio" : null),
       retailPrice: (value) => (value <= 0 ? "Precio debe ser mayor a 0" : null),
-      wholeSalePrice: (value) =>
-        value <= 0 ? "Precio debe ser mayor a 0" : null,
-      SKU: (value) =>
-        value.trim().length === 0 ? "Codigo SKU es obligatorio" : null,
-      image: (value) =>
-        !value ? "La imagen del producto es obligatoria" : null,
-      categoryId: (value) =>
-        value.trim().length === 0 ? "La categoria es obligatoria" : null,
+      wholeSalePrice: (value) => (value <= 0 ? "Precio debe ser mayor a 0" : null),
+      SKU: (value) => (value.trim().length === 0 ? "Codigo SKU es obligatorio" : null),
+      image: (value) => (!value ? "La imagen del producto es obligatoria" : null),
+      categoryId: (value) => (value.trim().length === 0 ? "La categoria es obligatoria" : null),
     },
   });
 
   const handleSubmit = async (values: typeof form.values) => {
+    onLoading();
     try {
       const imageBase64 = values.image;
       const currentRetailPrice = values.retailPrice;
@@ -79,13 +63,31 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         },
       });
 
+      onCloseLoading();
       onCreateSuccess();
       onSuccess();
       onClose();
     } catch (err) {
+      onCloseLoading();
       onCreateError();
       console.error("Error updating product:", err);
     }
+  };
+
+  const onLoading = () => {
+    setLoading(true);
+    notifications.show({
+      color: "teal",
+      icon: <FaCheckCircle />,
+      title: "CARGANDO....",
+      message: `Espere hasta que se haya completado la operación`,
+      position: "top-right",
+    });
+  };
+
+  const onCloseLoading = () => {
+    setLoading(false);
+    notifications.clean();
   };
 
   const onCreateSuccess = () => {
@@ -103,7 +105,7 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
       color: "red",
       icon: <VscError />,
       title: "Modificar Producto",
-      message: `El producto ${form.values.SKU} no se pudo modificar, intentelo de nuevo`,
+      message: `El SKU ${form.values.SKU} ya se encuentra guardado, intente con otro SKU`,
       position: "top-right",
     });
   };
@@ -117,25 +119,20 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
       <Stack justify="center" align="center" p={25}>
         <PreviewImageUpdateProduct
           value={form.values.image} // Initialize with product.image
-          onChange={(base64: string | ArrayBuffer | null) =>
-            form.setFieldValue("image", base64)
-          }
+          onChange={(base64: string | ArrayBuffer | null) => form.setFieldValue("image", base64)}
+          loading={loading}
         />
         {form.errors.image && <Alert color="red">{form.errors.image}</Alert>}
       </Stack>
 
-      <TextInput
-        label="Nombre del Producto"
-        placeholder="Ingrese nombre"
-        withAsterisk
-        {...form.getInputProps("name")}
-      />
+      <TextInput label="Nombre del Producto" placeholder="Ingrese nombre" withAsterisk {...form.getInputProps("name")} disabled={loading} />
       <NumberInput
         label="Precio al Detalle"
         decimalScale={2}
         placeholder="e.g., 10, 12.50, 5.50, 24.40"
         withAsterisk
         {...form.getInputProps("retailPrice")}
+        disabled={loading}
       />
       <NumberInput
         label="Precio por Mayor"
@@ -143,19 +140,11 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         placeholder="e.g., 10, 12.50, 5.50, 24.40"
         withAsterisk
         {...form.getInputProps("wholeSalePrice")}
+        disabled={loading}
       />
-      <TextInput
-        label="SKU"
-        placeholder="e.g., PRODUCT01"
-        withAsterisk
-        {...form.getInputProps("SKU")}
-      />
+      <TextInput label="SKU" placeholder="e.g., PRODUCT01" withAsterisk {...form.getInputProps("SKU")} disabled={loading} />
 
-      <TextInput
-        label="Descripcion"
-        placeholder="Describa el producto"
-        {...form.getInputProps("description")}
-      />
+      <TextInput label="Descripcion" placeholder="Describa el producto" {...form.getInputProps("description")} disabled={loading} />
 
       <Flex>
         {loadingCategories ? (
@@ -169,7 +158,7 @@ export const UpdateProductForm: React.FC<UpdateProductFormProps> = ({
         )}
       </Flex>
 
-      <Button type="submit" fullWidth mt="lg" loading={loadingUpdateProduct}>
+      <Button type="submit" fullWidth mt="lg" loading={loadingUpdateProduct} disabled={loading}>
         Modificar Producto
       </Button>
     </form>

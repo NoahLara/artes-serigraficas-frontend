@@ -33,7 +33,7 @@ export const stylesSheet = StyleSheet.create({
     marginBottom: 10,
   },
   image_container: {
-    width: "40%",
+    width: "30%",
     textAlign: "center",
   },
   product_image: {
@@ -66,7 +66,7 @@ export const stylesSheet = StyleSheet.create({
     textAlign: "center",
   },
   detailContainer: {
-    paddingTop: 10,
+    width: "60%",
   },
   title: {
     fontSize: 12,

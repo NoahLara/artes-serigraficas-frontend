@@ -115,8 +115,15 @@ export const OrderConjunto = () => {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
-        {/* CUSTOMER DETAILS */}
+        {/* ORDER DETAIL */}
         <Text size="lg" fw={700}>
+          Pedido de Conjunto
+        </Text>
+
+        <DetailOrderConjunto onDetailChange={handleDetailChange} />
+
+        {/* CUSTOMER DETAILS */}
+        <Text size="lg" fw={700} mt={100}>
           Detalles del Cliente
         </Text>
 
@@ -135,14 +142,6 @@ export const OrderConjunto = () => {
           checked={form.values.customer.applyIVA}
           onChange={(e) => form.setFieldValue("customer.applyIVA", e.currentTarget.checked)}
         />
-
-        {/* ORDER DETAIL */}
-        <Divider my="sm" />
-        <Text size="lg" fw={700}>
-          Detalle del Pedido
-        </Text>
-
-        <DetailOrderConjunto onDetailChange={handleDetailChange} />
 
         {/* PAYMENT DETAILS */}
         <Divider my="sm" />

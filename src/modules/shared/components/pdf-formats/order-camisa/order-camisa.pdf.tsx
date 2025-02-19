@@ -26,6 +26,19 @@ export const OrderCamisaPDF = ({ detailOrder, customer, deliveryDate }: ProductP
           <View style={stylesSheet.image_container}>
             {detailOrder.image ? <Image src={detailOrder.image} style={stylesSheet.product_image} /> : <Text style={stylesSheet.text_bold}>NO IMAGEN</Text>}
           </View>
+
+          {/* Additional Order Details */}
+          <View style={stylesSheet.detailContainer}>
+            <Text style={stylesSheet.title}>Detalles:</Text>
+            <Text>Tipo de Cuello: {detailOrder.neck}</Text>
+            <Text>Tipo de Manga: {detailOrder.sleeve}</Text>
+            <Text>Tipo de Tela: {detailOrder.fabric}</Text>
+            <Text>Ajuste: {detailOrder.fit}</Text>
+            <Text>Peso de Tela: {detailOrder.fabricWeight}g</Text>
+            <Text>Técnica de Estampado: {detailOrder.technique}</Text>
+            <Text>Ubicaciones de Estampado: {detailOrder.stamping.join(", ")}</Text>
+            {detailOrder.note && <Text>Nota: {detailOrder.note}</Text>}
+          </View>
         </View>
 
         {/* Shirt Details */}
@@ -48,19 +61,6 @@ export const OrderCamisaPDF = ({ detailOrder, customer, deliveryDate }: ProductP
               <Text style={stylesSheet.tableCell}> </Text>
             </View>
           ))}
-        </View>
-
-        {/* Additional Order Details */}
-        <View style={stylesSheet.detailContainer}>
-          <Text style={stylesSheet.title}>Detalles Adicionales:</Text>
-          <Text>Tipo de Cuello: {detailOrder.neck}</Text>
-          <Text>Tipo de Manga: {detailOrder.sleeve}</Text>
-          <Text>Tipo de Tela: {detailOrder.fabric}</Text>
-          <Text>Ajuste: {detailOrder.fit}</Text>
-          <Text>Peso de Tela: {detailOrder.fabricWeight}g</Text>
-          <Text>Técnica de Estampado: {detailOrder.technique}</Text>
-          <Text>Ubicaciones de Estampado: {detailOrder.stamping.join(", ")}</Text>
-          {detailOrder.note && <Text>Nota: {detailOrder.note}</Text>}
         </View>
       </Page>
     </Document>
