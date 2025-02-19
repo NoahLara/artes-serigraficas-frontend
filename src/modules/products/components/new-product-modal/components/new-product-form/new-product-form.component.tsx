@@ -5,7 +5,7 @@ import { VscError } from "react-icons/vsc";
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_PRODUCT } from "../../../../../../graphql/queries/createProduct.query";
-import { PreviewImageNewProduct } from "../preview-image-new-product/preview-image-new-product.component";
+import { PreviewImageNewProduct } from "../../../../../shared/components/preview-image-new-product/preview-image-new-product.component";
 import { Category } from "../../../../../shared/core/interfaces";
 import { GET_CATEGORIES } from "../../../../../../graphql/queries/getCategories.query";
 import { useParams } from "react-router-dom";
@@ -22,6 +22,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
   const [categoryIdToSave, setCategoryIdToSave] = useState<string>("");
 
   const [createProduct, { error: errorCreateProduct }] = useMutation(CREATE_PRODUCT);
+
+  const [loading, setLoading] = useState(false);
 
   const { data: categoriesData } = useQuery<{
     categories: Category[];
@@ -69,6 +71,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
+      onLoading();
       const imageBase64 = values.image;
       const currentRetailPrice = values.retailPrice;
       const currentWholeSalePrice = values.wholeSalePrice;
@@ -85,13 +88,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
       });
 
       form.reset();
+      onCloseLoading();
       onCreateSuccess();
       onSuccess();
       onClose();
     } catch (err) {
+      onCloseLoading();
       onCreateError();
       console.error("Error creating product:", err);
     }
+  };
+
+  const onLoading = () => {
+    setLoading(true);
+    notifications.show({
+      color: "teal",
+      icon: <FaCheckCircle />,
+      title: "CARGANDO....",
+      message: `Espere hasta que se haya completado la operación`,
+      position: "top-right",
+    });
+  };
+
+  const onCloseLoading = () => {
+    setLoading(false);
+    notifications.clean();
   };
 
   const onCreateSuccess = () => {
@@ -109,7 +130,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
       color: "red",
       icon: <VscError />,
       title: "Nuevo Producto",
-      message: `El producto ${form.values.SKU} no se pudo crear, intentelo de nuevo`,
+      message: `El SKU ${form.values.SKU} ya se encuentra guardado, intente con otro SKU`,
       position: "top-right",
     });
     console.log("Error creating product: ", errorCreateProduct);
@@ -122,20 +143,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onClose }) 
       </Text>
       {/* PREVIEW IMAGE */}
       <Stack justify="center" align="center" p={25}>
-        <PreviewImageNewProduct value={form.values.image} onChange={(base64: string | ArrayBuffer | null) => form.setFieldValue("image", base64)} />
+        <PreviewImageNewProduct
+          value={form.values.image}
+          onChange={(base64: string | ArrayBuffer | null) => form.setFieldValue("image", base64)}
+          loading={loading}
+        />
         {form.errors.image && <Alert color="red">{form.errors.image}</Alert>}
       </Stack>
 
-      <TextInput label="Nombre del Producto" placeholder="e.g., Sample Product" withAsterisk {...form.getInputProps("name")} />
-      <NumberInput label="Precio al Detalle" placeholder="e.g., 6.50" decimalScale={2} withAsterisk {...form.getInputProps("retailPrice")} />
+      <TextInput label="Nombre del Producto" placeholder="e.g., Sample Product" withAsterisk {...form.getInputProps("name")} disabled={loading} />
+      <NumberInput label="Precio al Detalle" placeholder="e.g., 6.50" decimalScale={2} withAsterisk {...form.getInputProps("retailPrice")} disabled={loading} />
 
-      <NumberInput label="Precio por Mayor" placeholder="e.g., 10.35" decimalScale={2} withAsterisk {...form.getInputProps("wholeSalePrice")} />
+      <NumberInput
+        label="Precio por Mayor"
+        placeholder="e.g., 10.35"
+        decimalScale={2}
+        withAsterisk
+        {...form.getInputProps("wholeSalePrice")}
+        disabled={loading}
+      />
 
-      <TextInput label="SKU" placeholder="e.g., PRODUCT01" withAsterisk {...form.getInputProps("SKU")} />
+      <TextInput label="SKU" placeholder="e.g., PRODUCT01" withAsterisk {...form.getInputProps("SKU")} disabled={loading} />
 
-      <TextInput label="Descripción" placeholder="Describe el producto" {...form.getInputProps("description")} />
+      <TextInput label="Descripción" placeholder="Describe el producto" {...form.getInputProps("description")} disabled={loading} />
 
-      <Button type="submit" fullWidth mt="lg">
+      <Button type="submit" fullWidth mt="lg" disabled={loading}>
         Crear Producto
       </Button>
     </form>

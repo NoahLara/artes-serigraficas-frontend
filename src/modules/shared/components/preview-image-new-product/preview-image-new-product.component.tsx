@@ -2,17 +2,15 @@ import React, { useRef, useState } from "react";
 import { Box, Button, Group, Image } from "@mantine/core";
 import { FaImage } from "react-icons/fa";
 import * as S from "./preview-image-new-product.styles";
-import { toBase64 } from "../../../../../shared/util";
+import { toBase64 } from "../../util";
 
 interface CustomImageInputProps {
+  loading: boolean;
   value: string | ArrayBuffer | null;
   onChange: (base64: string | ArrayBuffer | null) => void;
 }
 
-export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({
-  // value,
-  onChange,
-}) => {
+export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({ loading, onChange }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,15 +40,17 @@ export const PreviewImageNewProduct: React.FC<CustomImageInputProps> = ({
             height={250}
             style={{ objectFit: "contain" }}
           />
-          <Group ps="center" mt="sm">
-            <Button size="xs" onClick={handleRemove} variant="outline" color="red">
-              Remove
-            </Button>
-            <Button size="xs" component="label" variant="outline">
-              Replace
-              <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
-            </Button>
-          </Group>
+          {!loading && (
+            <Group ps="center" mt="sm">
+              <Button size="xs" onClick={handleRemove} variant="outline" color="red">
+                Remover
+              </Button>
+              <Button size="xs" component="label" variant="outline">
+                Reemplazar
+                <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
+              </Button>
+            </Group>
+          )}
         </Box>
       ) : (
         <div onClick={() => fileInputRef.current?.click()}>

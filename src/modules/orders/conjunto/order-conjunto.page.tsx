@@ -4,7 +4,7 @@ import { useForm } from "@mantine/form";
 import { MdAssignmentAdd } from "react-icons/md";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import dayjs from "dayjs";
-import { OrderConjuntoInterface } from "./order-conjunto.interface";
+import { OrderGeneralDetails } from "../../shared/core/interfaces/order-conjunto.interface";
 import { DetailConjuntoOrderInterface } from "./components/detail-conjunto-order.interface";
 import { DetailOrderConjunto } from "./components/detail-conjunto-order.component";
 import { DateTimePicker } from "@mantine/dates";
@@ -12,11 +12,11 @@ import { DocumentProps, pdf } from "@react-pdf/renderer";
 import { OrderConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/order-conjunto.pdf";
 import { useDisclosure } from "@mantine/hooks";
 import * as S from "./order-conjunto.styles";
-import { InvoicePDF } from "../../shared/components/pdf-formats/invoice/invoice.pdf";
+import { InvoiceConjuntoPDF } from "../../shared/components/pdf-formats/order-conjunto/invoice/invoice-conjunto.pdf";
 
 export const OrderConjunto = () => {
   // Form setup with validation rules
-  const form = useForm<OrderConjuntoInterface>({
+  const form = useForm<OrderGeneralDetails>({
     initialValues: {
       date: new Date(),
       madeDate: new Date(),
@@ -59,7 +59,7 @@ export const OrderConjunto = () => {
   // Handle form submission
   const handleSubmit = (values: typeof form.values) => {
     // FOR FACTURA
-    const formattedValues: OrderConjuntoInterface = {
+    const formattedValues: OrderGeneralDetails = {
       ...values,
       madeDate: dayjs(values.madeDate).format("dddd DD MMMM YYYY hh:mm A"),
       date: dayjs(values.date).format("dddd DD MMMM YYYY hh:mm A"),
@@ -76,7 +76,9 @@ export const OrderConjunto = () => {
       />
     );
 
-    const pdfInvoice = <InvoicePDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />;
+    const pdfInvoice = (
+      <InvoiceConjuntoPDF detailOrder={detailOrder} paymentInAdvance={form.getValues().payment.advancePayment} customer={form.getValues().customer} />
+    );
 
     // Save the PDF document in the state for rendering
     setPdfOrderData(pdfDocument);
@@ -113,8 +115,15 @@ export const OrderConjunto = () => {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
-        {/* CUSTOMER DETAILS */}
+        {/* ORDER DETAIL */}
         <Text size="lg" fw={700}>
+          Pedido de Conjunto
+        </Text>
+
+        <DetailOrderConjunto onDetailChange={handleDetailChange} />
+
+        {/* CUSTOMER DETAILS */}
+        <Text size="lg" fw={700} mt={100}>
           Detalles del Cliente
         </Text>
 
@@ -133,14 +142,6 @@ export const OrderConjunto = () => {
           checked={form.values.customer.applyIVA}
           onChange={(e) => form.setFieldValue("customer.applyIVA", e.currentTarget.checked)}
         />
-
-        {/* ORDER DETAIL */}
-        <Divider my="sm" />
-        <Text size="lg" fw={700}>
-          Detalle del Pedido
-        </Text>
-
-        <DetailOrderConjunto onDetailChange={handleDetailChange} />
 
         {/* PAYMENT DETAILS */}
         <Divider my="sm" />
